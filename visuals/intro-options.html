@@ -137,15 +137,16 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     <div class="feat-meta">
       <div class="eyebrow">הגרסה שבחרת · ו + ב + א</div>
       <h2 id="feat-title">מבול התראות בזיכרון שנשבר</h2>
-      <p>מוקרן על המסך לפני שאתה עולה לבמה. התמונה עולה כמו זיכרון ישן ומהבהב. ההתראות מתחילות להיערם, כל אחת קורעת את הפריים בגליץ׳, והגליצ׳ים מתחזקים ככל שההתראות מאיצות. בסוף הכל קורס, ושקט.</p>
+      <p>כדקה וחצי על המסך, לפני שאתה עולה לבמה. התמונה עולה כמו זיכרון ישן ומהבהב. ההתראות מתחילות להיערם, כל אחת קורעת את הפריים בגליץ׳, והגליצ׳ים מתחזקים ככל שההתראות מאיצות. בסוף הכל קורס, ושקט.</p>
       <ol class="beats">
         <li><time>0:00</time><span>חושך ושקט.</span></li>
-        <li><time>0:01.5</time><span>התמונה עולה, מהבהבת וגרעינית.</span></li>
-        <li><time>0:02.5</time><span>התראה ראשונה: פינג, והפריים נקרע לרגע.</span></li>
-        <li><time>0:05</time><span>ההתראות מאיצות, והגליץ׳ מחריף בכל אחת.</span></li>
-        <li><time>0:10.1</time><span>הכל קורס לגליץ׳ אחד גדול.</span></li>
-        <li><time>0:10.7</time><span>שחור. שקט מוחלט.</span></li>
-        <li><time>0:12.5</time><span>המסך נשאר שחור. אתה עולה לבמה.</span></li>
+        <li><time>0:01.5</time><span>התמונה עולה, מהבהבת וגרעינית. רק תמונה וצליל נמוך.</span></li>
+        <li><time>0:15.5</time><span>התראה ראשונה: פינג, והפריים נקרע לרגע.</span></li>
+        <li><time>0:30</time><span>ההתראות מתקרבות זו לזו.</span></li>
+        <li><time>0:50</time><span>מבול. התראות בלי הפסקה, והגליץ׳ משתלט.</span></li>
+        <li><time>0:56.9</time><span>הכל קורס לגליץ׳ אחד גדול, ושחור.</span></li>
+        <li><time>0:57.5</time><span>30 שניות של שחור ושקט.</span></li>
+        <li><time>1:27.5</time><span>אתה עולה לבמה.</span></li>
       </ol>
       <button class="btn primary" id="feat-play" type="button">▶ נגן כרצף פתיחה, עם סאונד</button>
     </div>
@@ -179,7 +180,7 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
 
   // ---------- constants & tiny helpers ----------
   const W = 960, H = 540, FPS = 24;
-  const SEQ_DEFAULT = { cut: 9, end: 11, marks: [[1.5, 'התמונה עולה'], [9, 'חיתוך לשחור']] };
+  const SEQ_DEFAULT = { cut: 9, end: 11, marks: [[0, 'חושך'], [1.5, 'התמונה עולה'], [9, 'חיתוך לשחור'], [11, 'עלייה לבמה']] };
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const rand = (a = 1, b) => b === undefined ? Math.random() * a : a + Math.random() * (b - a);
   const mk = (w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h });
@@ -444,33 +445,40 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     o.connect(lp).connect(g).connect(out); o.start(from); o.stop(cutAt + .05);
   }
 
-  // Arrival times accelerate: each gap is ~84% of the previous.
+  // Combo timeline (seconds from the moment the image appears): quiet memory, sparse alerts, flood, collapse.
+  const CT = { first: 14, collapse: 55.4, black: 56, loop: 58, blackHold: 30 };
+
+  // Arrival times accelerate: each gap is ~87% of the previous, down to a 0.14s machine-gun floor.
   function arrivals(k) {
     const out = [], speed = .6 + .4 * k;
-    for (let tm = 1, gap = .95; tm < 8.4; tm += Math.max(.14, gap) / speed, gap *= .84) out.push(tm);
+    for (let tm = CT.first, gap = 5; tm < CT.collapse - .2; tm += Math.max(.14, gap) / speed, gap *= .87) out.push(tm);
     return out;
   }
 
   // ו + ב + א: alerts stack over a flickering memory; every arrival tears the frame, harder each time.
   const COMBO = {
     key: 'combo', tag: 'ו+ב+א', name: 'מבול התראות בזיכרון שנשבר',
-    seq: { cut: 10.7, end: 12.5, marks: [[1.5, 'התמונה עולה'], [10.1, 'קריסה ושחור']] },
+    seq: {
+      cut: 1.5 + CT.black, end: 1.5 + CT.black + CT.blackHold,
+      marks: [[0, 'חושך, התמונה עולה'], [1.5 + CT.first, 'התראה ראשונה'], [1.5 + CT.collapse, 'קריסה ושחור'], [1.5 + CT.black + CT.blackHold, 'עלייה לבמה']],
+    },
     css: () => 'contrast(1.08)',
     draw(x, w, h, t, k) {
-      const s = w / 960, u = t % 10, arr = arrivals(k);
-      if (u >= 9.2) { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); return; }
+      const s = w / 960, u = t % CT.loop, arr = arrivals(k);
+      const p = clamp((u - CT.first) / (CT.collapse - CT.first), 0, 1);
+      if (u >= CT.black) { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); return; }
       let n = 0; while (n < arr.length && arr[n] <= u) n++;
       const since = n ? u - arr[n - 1] : Infinity;
 
       const jump = Math.random() < .05 * k ? rand(-1, 1) * h * .025 : 0;
       x.save(); x.translate(0, jump);
       x.fillStyle = '#000'; x.fillRect(0, -h, w, h * 3);
-      const z = 1.03 + u * .004, dw = w * z, dh = h * z, ox = (w - dw) / 2, oy = (h - dh) / 2;
+      const z = 1.03 + u * .0025, dw = w * z, dh = h * z, ox = (w - dw) / 2, oy = (h - dh) / 2;
       x.drawImage(S.base, ox, oy, dw, dh);
       x.globalAlpha = .6; x.drawImage(S.gray, ox, oy, dw, dh); x.globalAlpha = 1;
       x.globalCompositeOperation = 'multiply'; x.fillStyle = 'rgb(255,232,205)'; x.fillRect(0, 0, w, h);
       x.globalCompositeOperation = 'source-over';
-      x.fillStyle = `rgba(0,0,0,${.12 + Math.min(n, 8) * .03})`; x.fillRect(0, 0, w, h);
+      x.fillStyle = `rgba(0,0,0,${.12 + .26 * p})`; x.fillRect(0, 0, w, h);
       drawAlerts(x, w, h, n, since);
       x.restore();
 
@@ -479,10 +487,10 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
       x.fillRect(0, 0, w, h);
       if (Math.random() < .02 * k) { x.fillStyle = 'rgba(0,0,0,.7)'; x.fillRect(0, 0, w, h); }
 
-      const late = u > 8.6;
-      const gdur = Math.min(.25, .08 + n * .012);
-      if ((n && since < gdur) || late || (n > 8 && Math.random() < .05 * k)) {
-        const amp = late ? 3 : Math.min(2.2, .6 + n * .1);
+      const late = u > CT.collapse;
+      const gdur = .08 + .17 * p;
+      if ((n && since < gdur) || late || (p > .5 && Math.random() < .06 * k * p)) {
+        const amp = late ? 3 : .5 + 1.7 * p;
         frameSplit(x, w, h, rand(6, 14) * amp * s * k);
         frameTears(x, w, h, (2 + amp * 4) | 0, 50 * amp * s * k);
         if (amp > 1.2) {
@@ -503,12 +511,13 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     },
     sound(ac, out, t0, k) {
       const arr = arrivals(k);
-      drone(ac, out, t0, t0 + 8.6, t0 + 9.2);
-      arr.forEach((a, i) => {
+      drone(ac, out, t0, t0 + CT.collapse, t0 + CT.black);
+      arr.forEach((a) => {
+        const p = clamp((a - CT.first) / (CT.collapse - CT.first), 0, 1);
         ping(ac, out, t0 + a, .16);
-        crackle(ac, out, t0 + a, Math.min(.25, .08 + i * .012), .05 + .012 * Math.min(i, 12));
+        crackle(ac, out, t0 + a, .08 + .17 * p, .05 + .15 * p);
       });
-      crackle(ac, out, t0 + 8.6, .6, .28);
+      crackle(ac, out, t0 + CT.collapse, CT.black - CT.collapse, .28);
     },
   };
 
@@ -770,12 +779,14 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     });
   }
 
-  const fmtTime = (sec) => `0:${String(Math.floor(sec)).padStart(2, '0')}${sec % 1 ? '.' + Math.round((sec % 1) * 10) : ''}`;
+  const fmtTime = (sec) => {
+    const m = Math.floor(sec / 60), r = sec - m * 60, frac = Math.round((r % 1) * 10);
+    return `${m}:${String(Math.floor(r)).padStart(2, '0')}${frac ? '.' + frac : ''}`;
+  };
 
   function buildTimeline(fx) {
     const seq = fx.seq || SEQ_DEFAULT;
-    const marks = [[0, 'חושך'], ...seq.marks, [seq.end, 'עלייה לבמה']];
-    $('marks').replaceChildren(...marks.map(([sec, label]) => {
+    $('marks').replaceChildren(...seq.marks.map(([sec, label]) => {
       const m = document.createElement('span');
       m.className = 'mark';
       m.style.left = `${(sec / seq.end) * 100}%`;
