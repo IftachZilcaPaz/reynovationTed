@@ -202,7 +202,13 @@ textarea:read-only { opacity: .8; }
     return el;
   }
 
-  function autosize(ta) { ta.style.height = 'auto'; ta.style.height = `${ta.scrollHeight + 2}px`; }
+  // Grow the box with its text without letting the momentary collapse scroll the page.
+  function autosize(ta) {
+    const y = window.scrollY;
+    ta.style.height = 'auto';
+    ta.style.height = `${ta.scrollHeight + 2}px`;
+    if (window.scrollY !== y) window.scrollTo(0, y);
+  }
 
   function refresh(u) {
     const { els, doc } = u, st = stateOf(u), n = words(els.ta.value);
@@ -329,7 +335,10 @@ textarea:read-only { opacity: .8; }
       }
       refresh(u);
     });
-    docs.forEach((ds) => list.append(ui.get(ds.id).els.root)); // keep order
+    // Re-order only when the order really changed: moving a node blurs the textarea inside it.
+    const want = docs.map((ds) => ui.get(ds.id).els.root);
+    const have = [...list.querySelectorAll(':scope > .sheet')];
+    if (want.some((el, i) => have[i] !== el)) want.forEach((el) => list.append(el));
   }
 
   async function start() {
