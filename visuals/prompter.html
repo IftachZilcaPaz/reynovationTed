@@ -1,0 +1,419 @@
+<title>טלפרומפטר הממ״ד</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a rehearsal booth — slim control strip, then one 16:9 stage that plays the intro and hands over to the rolling script */
+:root {
+  --ground: #111315;
+  --panel: #1a1d20;
+  --line: #2b2f34;
+  --fg: #e8e5df;
+  --muted: #8e939a;
+  --accent: #ff8a1f;
+  --on-accent: #1a0f02;
+  --stage: #000;
+  --display: 'Karantina', 'Secular One', system-ui, sans-serif;
+  --body: 'IBM Plex Sans Hebrew', 'Heebo', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { background: var(--ground); color: var(--fg); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.55; }
+
+.wrap {
+  max-width: 1240px; margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 40px); padding-block: 28px 64px;
+  display: grid; gap: 20px;
+}
+header { display: grid; gap: 10px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--accent); }
+h1 { font-family: var(--display); font-weight: 700; margin: 0; font-size: clamp(56px, 9vw, 108px); line-height: .82; letter-spacing: .01em; }
+.lede { max-width: 66ch; color: var(--muted); margin: 0; }
+
+.controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+  padding: 12px 14px; border: 1px solid var(--line); background: var(--panel); border-radius: 6px;
+}
+.field { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+.field output { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 7ch; font-variant-numeric: tabular-nums; }
+select, input[type=range], input[type=checkbox] { accent-color: var(--accent); }
+select {
+  font: inherit; font-size: 14px; color: var(--fg); background: var(--ground);
+  border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px;
+}
+input[type=range] { width: 110px; }
+input[type=checkbox] { width: 16px; height: 16px; }
+.btn {
+  font: inherit; font-size: 14px; color: var(--fg); background: transparent;
+  border: 1px solid var(--line); border-radius: 4px; padding: 7px 12px; cursor: pointer; line-height: 1.2;
+}
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.08); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-inline-start: auto; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- stage ---------- */
+.stage {
+  --fs: 3.6;
+  position: relative; width: min(100%, calc((100dvh - 48px) * 16 / 9)); max-width: 100%; aspect-ratio: 16 / 9; overflow: hidden;
+  margin-inline: auto;
+  background: var(--stage); border: 1px solid var(--line); border-radius: 4px; container-type: size;
+}
+.stage:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; border: 0; border-radius: 0; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .6s ease; }
+.stage[data-phase="prompt"] canvas, .stage[data-phase="done"] canvas { opacity: 0; }
+
+.prompter {
+  position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%);
+}
+.stage[data-phase="prompt"] .prompter, .stage[data-phase="done"] .prompter { opacity: 1; }
+.stage.mirror .prompter { transform: scaleX(-1); }
+
+.roll {
+  position: absolute; inset-inline: 0; top: 0; will-change: transform;
+  padding-inline: 8cqi; display: grid; justify-items: center;
+  font-size: calc(var(--fs) * 1cqi); line-height: 1.45; font-weight: 500; color: #f4f1eb;
+}
+.col { width: min(100%, 24em); }
+.sec {
+  margin: 1.4em 0 .6em; font-family: var(--mono); font-weight: 500; font-size: .42em;
+  letter-spacing: .14em; color: var(--accent);
+}
+.sec:first-child { margin-top: 0; }
+.para { display: grid; gap: .08em; margin-bottom: .9em; }
+.pending { color: #6d7278; font-size: .6em; margin-bottom: 1.4em; }
+.dir { font-family: var(--mono); font-size: .5em; color: var(--accent); letter-spacing: .04em; }
+.gap { color: #9aa0a6; border-bottom: 2px dashed #5b6168; }
+.p1, .p2 { font-style: normal; color: var(--accent); font-weight: 400; }
+.p1 { opacity: .75; margin-inline: .1em; }
+.p2 { margin-inline: .2em; }
+
+.guide { position: absolute; inset-inline: 0; top: 38%; height: 0; pointer-events: none; }
+.guide::before, .guide::after {
+  content: ''; position: absolute; top: -.7cqi; border-block: .7cqi solid transparent;
+}
+.guide::before { inset-inline-start: 1.6cqi; border-inline-start: 1.2cqi solid var(--accent); }
+.guide::after { inset-inline-end: 1.6cqi; border-inline-end: 1.2cqi solid var(--accent); }
+
+.hud {
+  position: absolute; inset-inline: 0; bottom: 0; display: flex; justify-content: space-between; gap: 12px;
+  padding: 1.2cqi 1.8cqi; font-family: var(--mono); font-size: max(11px, 1.1cqi); color: #7d838a;
+  font-variant-numeric: tabular-nums; pointer-events: none;
+}
+.hud .hint { direction: rtl; }
+.poster {
+  position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0,0,0,.35);
+  transition: opacity .3s ease;
+}
+.poster .btn { font-size: max(15px, 1.6cqi); padding: .8em 1.4em; }
+.stage:not([data-phase="idle"]) .poster { opacity: 0; pointer-events: none; }
+.status { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; color: var(--muted); text-align: center;  pointer-events: none; }
+.status[hidden] { display: none; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 13px; color: var(--muted); }
+.legend b { font-weight: 500; color: var(--accent); font-family: var(--mono); margin-inline-end: 6px; }
+
+@media (max-width: 640px) {
+  .actions { margin-inline-start: 0; }
+}
+</style>
+
+<div class="wrap" dir="rtl" lang="he">
+  <header>
+    <div class="eyebrow">חזרה · פתיח וטקסט</div>
+    <h1>טלפרומפטר</h1>
+    <p class="lede">סקיצה של איך ההרצאה תרגיש: סרטון הפתיח רץ על המסך, ואז הטקסט של ההרצאה נגלל מלמטה למעלה. השורה שצריך לקרוא עוברת בין שני החיצים הכתומים. הטקסט נטען ישירות מהתסריט, אז כל עדכון בתסריט מופיע כאן.</p>
+  </header>
+
+  <div class="controls" role="group" aria-label="הגדרות">
+    <label class="field" for="photo">תמונה <select id="photo"></select></label>
+    <label class="field" for="intro">פתיח
+      <select id="intro">
+        <option value="full">מלא, עם 30 שנ׳ שחור</option>
+        <option value="short">מקוצר, 3 שנ׳ שחור</option>
+        <option value="none">בלי פתיח</option>
+      </select>
+    </label>
+    <label class="field" for="sound"><input type="checkbox" id="sound" checked> סאונד</label>
+    <label class="field" for="wpm">קצב <input type="range" id="wpm" min="70" max="190" step="5" value="120"><output id="wpm-out" for="wpm">120 מ׳/דק׳</output></label>
+    <label class="field" for="size">גודל <input type="range" id="size" min="2.4" max="6" step="0.2" value="3.6"></label>
+    <label class="field" for="mirror"><input type="checkbox" id="mirror"> מראה</label>
+    <div class="actions">
+      <button class="btn primary" id="play" type="button">▶ התחלה</button>
+      <button class="btn" id="skip" type="button">דלג לטקסט</button>
+      <button class="btn" id="restart" type="button">מההתחלה</button>
+      <button class="btn" id="fs" type="button">מסך מלא</button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage" data-phase="idle">
+    <canvas id="intro-canvas" width="1280" height="720" aria-label="סרטון הפתיח"></canvas>
+    <div class="prompter" id="prompter" aria-live="off">
+      <div class="roll" id="roll"></div>
+      <div class="guide" aria-hidden="true"></div>
+    </div>
+    <div class="hud" aria-hidden="true"><span id="hud-time">מוכן</span><span class="hint">רווח: עצירה · ↑↓ גלילה · +/− קצב</span></div>
+    <div class="poster"><button class="btn primary" id="poster-play" type="button">▶ התחלה</button></div>
+    <div class="status" id="status" hidden></div>
+  </div>
+
+  <div class="legend">
+    <span><b>/</b>נשימה קצרה</span>
+    <span><b>//</b>עצירה</span>
+    <span><b>[ ]</b>הוראת במה</span>
+    <span><b>‹ ›</b>פרט שעוד חסר</span>
+  </div>
+</div>
+
+<script src="intro-engine.js"></script>
+<script>
+(() => {
+  'use strict';
+
+  const { FPS, CT, COMBO, clamp, loadPhotos, fontsReady, fmtTime, renderFrame, renderSequenceFrame,
+    startAudio, stopAudio, pauseAudio, resumeAudio } = window.IntroEngine;
+
+  const $ = (id) => document.getElementById(id);
+  const SCRIPT_URLS = ['script.md', '../talk/script.md'];
+  const GUIDE = .38;                         // reading line, as a fraction of stage height
+  const HOLDS = { full: CT.blackHold, short: 3, none: 0 };
+
+  const st = {
+    phase: 'idle', playing: false, t: 0, offset: 0,
+    wpm: 120, words: 1, sources: [], src: 0,
+    geom: { stageH: 0, rollH: 0, max: 1 },
+  };
+
+  // ---------- script: markdown → teleprompter blocks ----------
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function parseScript(md) {
+    const sections = [];
+    let cur = null, para = [];
+    const flush = () => { if (cur && para.length) cur.paras.push(para); para = []; };
+    for (const raw of md.split(/\r?\n/)) {
+      const line = raw.trim();
+      const h = line.match(/^##\s+(.+)$/);
+      if (h) {
+        flush();
+        const [label, ...rest] = h[1].split(/:\s*/);
+        cur = { label, title: rest.join(': '), paras: [], pending: false };
+        sections.push(cur);
+        continue;
+      }
+      if (!cur) continue;
+      if (!line) { flush(); continue; }
+      if (line === '---' || line.startsWith('>') || line.startsWith('**משך')) continue;
+      if (/^_.+_$/.test(line)) { cur.pending = true; continue; }
+      para.push(line);
+    }
+    flush();
+    return sections;
+  }
+
+  function inline(line) {
+    return esc(line)
+      .replace(/`\[([^\]]+)\]`/g, '<span class="dir">[$1]</span>')
+      .replace(/‹([^›]*)›/g, '<span class="gap">$1</span>')
+      .replace(/\s*\/\/\s*/g, ' <i class="p2" aria-hidden="true">//</i> ')
+      .replace(/\s\/\s/g, ' <i class="p1" aria-hidden="true">/</i> ')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  }
+
+  const spokenWords = (line) => line
+    .replace(/`\[[^\]]*\]`/g, '').replace(/\/+/g, ' ')
+    .split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
+
+  function renderScript(sections) {
+    let words = 0;
+    const html = sections.map((sec) => {
+      const head = `<div class="sec">${esc(sec.label)}${sec.title ? ' · ' + esc(sec.title) : ''}</div>`;
+      if (!sec.paras.length) return head + '<div class="pending">עוד לא נכתב</div>';
+      return head + sec.paras.map((p) => {
+        words += p.reduce((n, l) => n + spokenWords(l), 0);
+        return `<div class="para">${p.map((l) => `<div>${inline(l)}</div>`).join('')}</div>`;
+      }).join('');
+    }).join('');
+    $('roll').innerHTML = `<div class="col">${html}</div>`;
+    st.words = Math.max(1, words);
+  }
+
+  async function loadScript() {
+    for (const url of SCRIPT_URLS) {
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (res.ok) return await res.text();
+      } catch (_) { /* try the next location */ }
+    }
+    throw new Error('script not found');
+  }
+
+  // ---------- geometry & scrolling ----------
+  function measure() {
+    const prevProgress = st.offset / st.geom.max;
+    const stageH = $('stage').clientHeight, rollH = $('roll').scrollHeight;
+    // Roll starts just below the stage and ends when its last line reaches the reading line.
+    const max = Math.max(1, stageH + rollH - stageH * GUIDE);
+    st.geom = { stageH, rollH, max };
+    st.offset = clamp(prevProgress, 0, 1) * max || 0;
+    placeRoll();
+  }
+
+  const pxPerSecond = () => (st.geom.rollH / st.words) * (st.wpm / 60);
+  const placeRoll = () => { $('roll').style.transform = `translateY(${st.geom.stageH - st.offset}px)`; };
+
+  // ---------- intro ----------
+  const introEnd = () => COMBO.seq.cut + HOLDS[$('intro').value];
+  const set = () => st.sources[st.src].set;
+
+  function drawPoster() {
+    renderFrame($('intro-canvas'), COMBO, 22, set(), { k: 1 });
+  }
+
+  // ---------- phases ----------
+  function setPhase(phase) {
+    st.phase = phase;
+    $('stage').dataset.phase = phase;
+    syncButtons();
+  }
+
+  function syncButtons() {
+    const label = st.playing ? 'השהיה' : st.phase === 'idle' || st.phase === 'done' ? '▶ התחלה' : '▶ המשך';
+    $('play').textContent = label;
+    $('skip').disabled = st.phase !== 'intro';
+  }
+
+  function begin() {
+    st.t = 0; st.offset = 0; placeRoll();
+    if ($('intro').value === 'none') setPhase('prompt');
+    else {
+      setPhase('intro');
+      if ($('sound').checked) startAudio(COMBO, 1.5, 1);
+    }
+    st.playing = true;
+    syncButtons();
+  }
+
+  function togglePlay() {
+    if (st.phase === 'idle' || st.phase === 'done') return begin();
+    st.playing = !st.playing;
+    if (st.phase === 'intro') (st.playing ? resumeAudio : pauseAudio)();
+    syncButtons();
+  }
+
+  function toPrompter() {
+    stopAudio();
+    st.t = 0;
+    setPhase('prompt');
+  }
+
+  function restart() {
+    stopAudio();
+    st.playing = false; st.t = 0; st.offset = 0; placeRoll();
+    setPhase('idle');
+    drawPoster();
+    $('hud-time').textContent = 'מוכן';
+  }
+
+  function nudge(px) {
+    if (st.phase !== 'prompt' && st.phase !== 'done') return;
+    st.offset = clamp(st.offset + px, 0, st.geom.max);
+    if (st.phase === 'done' && st.offset < st.geom.max) setPhase('prompt');
+    placeRoll();
+  }
+
+  // ---------- loop ----------
+  let last = performance.now(), lastIntro = 0;
+  function tick(now) {
+    requestAnimationFrame(tick);
+    const dt = Math.min(.1, (now - last) / 1000);
+    last = now;
+
+    if (st.phase === 'intro') {
+      if (st.playing) st.t += dt;
+      const end = introEnd();
+      if (st.t >= end) { toPrompter(); return; }
+      if (now - lastIntro >= 1000 / FPS) {
+        lastIntro = now;
+        renderSequenceFrame($('intro-canvas'), COMBO, st.t, set(), { k: 1 });
+      }
+      $('hud-time').textContent = `פתיח · ${fmtTime(Math.floor(st.t))} / ${fmtTime(Math.floor(end))}`;
+    } else if (st.phase === 'prompt') {
+      if (st.playing) {
+        st.t += dt;
+        st.offset += pxPerSecond() * dt;
+        if (st.offset >= st.geom.max) { st.offset = st.geom.max; st.playing = false; setPhase('done'); }
+        placeRoll();
+      }
+      const left = (st.geom.max - st.offset) / pxPerSecond();
+      $('hud-time').textContent = `טקסט · ${fmtTime(Math.floor(st.t))} · נותרו ${fmtTime(Math.max(0, Math.round(left)))}`;
+    } else if (st.phase === 'done') {
+      $('hud-time').textContent = 'סוף הטקסט';
+    }
+  }
+
+  // ---------- controls ----------
+  function setWpm(v) {
+    st.wpm = clamp(v, 70, 190);
+    $('wpm').value = st.wpm;
+    $('wpm-out').textContent = `${st.wpm} מ׳/דק׳`;
+  }
+
+  function wire() {
+    const photo = $('photo');
+    st.sources.forEach((src, i) => photo.add(new Option(src.label, String(i))));
+    photo.addEventListener('change', () => { st.src = +photo.value; if (st.phase === 'idle') drawPoster(); });
+
+    $('play').addEventListener('click', togglePlay);
+    $('poster-play').addEventListener('click', togglePlay);
+    $('skip').addEventListener('click', () => { if (st.phase === 'intro') toPrompter(); });
+    $('restart').addEventListener('click', restart);
+    $('sound').addEventListener('change', (e) => { if (!e.target.checked) stopAudio(); });
+    $('wpm').addEventListener('input', (e) => setWpm(+e.target.value));
+    $('size').addEventListener('input', (e) => { $('stage').style.setProperty('--fs', e.target.value); measure(); });
+    $('mirror').addEventListener('change', (e) => $('stage').classList.toggle('mirror', e.target.checked));
+    $('fs').addEventListener('click', () => {
+      try { const p = $('stage').requestFullscreen?.(); if (p && p.catch) p.catch(() => {}); } catch (_) { /* unavailable */ }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.closest('input, select, button')) return;
+      const step = st.geom.stageH * .08;
+      if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); nudge(step); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); nudge(-step); }
+      else if (e.key === '+' || e.key === '=') setWpm(st.wpm + 5);
+      else if (e.key === '-' || e.key === '_') setWpm(st.wpm - 5);
+    });
+    $('stage').addEventListener('wheel', (e) => {
+      if (st.phase !== 'prompt' && st.phase !== 'done') return;
+      e.preventDefault(); nudge(e.deltaY * .6);
+    }, { passive: false });
+
+    new ResizeObserver(measure).observe($('stage'));
+    document.addEventListener('fullscreenchange', measure);
+  }
+
+  async function start() {
+    await fontsReady();
+    st.sources = await loadPhotos();
+    try {
+      renderScript(parseScript(await loadScript()));
+    } catch (_) {
+      $('status').hidden = false;
+      $('status').textContent = 'לא הצלחתי לטעון את התסריט (script.md). הסרטון עדיין עובד, אבל בלי טקסט.';
+    }
+    wire();
+    measure();
+    drawPoster();
+    syncButtons();
+    requestAnimationFrame(tick);
+  }
+
+  start();
+})();
+</script>
