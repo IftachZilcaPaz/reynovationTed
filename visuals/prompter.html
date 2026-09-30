@@ -217,7 +217,7 @@ input[type=checkbox] { width: 16px; height: 16px; }
 
   function inline(line) {
     return esc(line)
-      .replace(/`\[([^\]]+)\]`/g, '<span class="dir">[$1]</span>')
+      .replace(/`?\[([^\]]+)\]`?/g, '<span class="dir">[$1]</span>')
       .replace(/‹([^›]*)›/g, '<span class="gap">$1</span>')
       .replace(/\s*\/\/\s*/g, ' <i class="p2" aria-hidden="true">//</i> ')
       .replace(/\s\/\s/g, ' <i class="p1" aria-hidden="true">/</i> ')
@@ -225,7 +225,7 @@ input[type=checkbox] { width: 16px; height: 16px; }
   }
 
   const spokenWords = (line) => line
-    .replace(/`\[[^\]]*\]`/g, '').replace(/\/+/g, ' ')
+    .replace(/`?\[[^\]]*\]`?/g, '').replace(/\/+/g, ' ')
     .split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
 
   function renderScript(sections) {

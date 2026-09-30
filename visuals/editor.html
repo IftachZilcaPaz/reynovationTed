@@ -1,0 +1,355 @@
+<title>עורך התסריט</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Karantina:wght@700&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a script desk — status strip on top, then one writing sheet per part of the talk, each with its own approve action */
+:root {
+  --ground: #111315;
+  --panel: #1a1d20;
+  --sheet: #15171a;
+  --line: #2b2f34;
+  --fg: #e8e5df;
+  --muted: #8e939a;
+  --accent: #ff8a1f;
+  --on-accent: #1a0f02;
+  --ok: #57b77a;
+  --wait: #e3b341;
+  --display: 'Karantina', 'Secular One', system-ui, sans-serif;
+  --body: 'IBM Plex Sans Hebrew', 'Heebo', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { background: var(--ground); color: var(--fg); }
+body { font-family: var(--body); font-size: 15px; line-height: 1.55; }
+
+.wrap {
+  max-width: 900px; margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 40px); padding-block: 28px 80px;
+  display: grid; gap: 22px;
+}
+header { display: grid; gap: 10px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--accent); }
+h1 { font-family: var(--display); font-weight: 700; margin: 0; font-size: clamp(56px, 9vw, 100px); line-height: .82; letter-spacing: .01em; }
+.lede { max-width: 64ch; color: var(--muted); margin: 0; }
+.lede strong { color: var(--fg); font-weight: 500; }
+
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+  padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+}
+.bar .summary { font-size: 14px; color: var(--muted); margin-inline-end: auto; min-width: 0; }
+.bar .summary b { color: var(--fg); font-weight: 500; }
+
+.banner { padding: 10px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--sheet); font-size: 14px; }
+.banner[data-tone="ok"] { border-color: color-mix(in srgb, var(--ok) 55%, var(--line)); }
+.banner[data-tone="warn"] { border-color: color-mix(in srgb, var(--wait) 60%, var(--line)); }
+.banner code { font-family: var(--mono); font-size: 13px; background: var(--ground); padding: 1px 6px; border-radius: 3px; user-select: all; }
+
+.btn {
+  font: inherit; font-size: 14px; color: var(--fg); background: transparent;
+  border: 1px solid var(--line); border-radius: 4px; padding: 7px 12px; cursor: pointer; line-height: 1.2;
+}
+.btn:hover:not(:disabled) { border-color: var(--muted); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 600; }
+.btn.primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn.ghost { border-color: transparent; color: var(--muted); padding-inline: 8px; }
+.btn.ghost:hover:not(:disabled) { color: var(--fg); border-color: var(--line); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.sections { display: grid; gap: 26px; }
+.sheet { display: grid; gap: 10px; }
+.sheet-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.sheet-head .label { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: var(--accent); }
+.sheet-head h2 { font-family: var(--display); font-weight: 700; font-size: 40px; line-height: .9; margin: 0; }
+.sheet-head .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; margin-inline-start: auto; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; padding: 2px 10px; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--muted); white-space: nowrap;
+}
+.pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill[data-state="edited"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.pill[data-state="pending"] { color: var(--wait); border-color: color-mix(in srgb, var(--wait) 45%, var(--line)); }
+.pill[data-state="synced"] { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+
+.tools { display: flex; flex-wrap: wrap; gap: 6px; }
+.tools .btn { font-family: var(--mono); font-size: 12.5px; padding: 4px 9px; }
+.tools .btn span { font-family: var(--body); color: var(--muted); margin-inline-start: 6px; }
+
+textarea {
+  width: 100%; min-height: 9em; resize: vertical; box-sizing: border-box;
+  font: inherit; font-size: 17.5px; line-height: 1.8; color: var(--fg);
+  background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px;
+}
+textarea:focus { outline: none; border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+textarea::placeholder { color: #5f656b; }
+textarea:read-only { opacity: .8; }
+
+.sheet-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.sheet-foot .saved { font-size: 12.5px; color: var(--muted); margin-inline-end: auto; }
+
+.empty { padding: 40px 16px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 6px; }
+
+@media (max-width: 520px) {
+  .sheet-head .meta { margin-inline-start: 0; flex-basis: 100%; }
+}
+</style>
+
+<div class="wrap" dir="rtl" lang="he">
+  <header>
+    <div class="eyebrow">תסריט · עריכה ואישור</div>
+    <h1>עורך התסריט</h1>
+    <p class="lede">עורכים כאן את הטקסט של כל חלק בהרצאה. כל שינוי נשמר אוטומטית כטיוטה. <strong>אישור</strong> שולח את החלק ל-Claude, שמכניס אותו לרפו ומעדכן את הטלפרומפטר. הסטטוס של כל חלק מתעדכן כאן עד שהוא מסומן "ברפו".</p>
+  </header>
+
+  <div class="bar" role="group" aria-label="סיכום">
+    <span class="summary" id="summary">טוען…</span>
+    <button class="btn primary" id="approve-all" type="button" disabled>אישור כל השינויים</button>
+  </div>
+
+  <div class="banner" id="banner" role="status" aria-live="polite" hidden></div>
+
+  <section class="sections" id="sections" aria-label="חלקי ההרצאה">
+    <div class="empty" id="empty">טוען את התסריט…</div>
+  </section>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const TRIGGER_ID = 'trig_011KjtYvQxEQzp33LWqwXYTW';
+  const REMOTE = 'Claude Code Remote';
+  const WPM = 130;
+  const SAVE_DELAY = 1000;
+  const TOOLS = [
+    { ins: ' / ', label: '/', hint: 'נשימה' },
+    { ins: ' // ', label: '//', hint: 'עצירה' },
+    { ins: '[]', label: '[ ]', hint: 'הוראת במה', caret: 1 },
+    { ins: '‹›', label: '‹ ›', hint: 'פרט חסר', caret: 1 },
+  ];
+  const STATE_LABEL = {
+    empty: 'עוד לא נכתב',
+    edited: 'שינויים שלא אושרו',
+    pending: 'אושר, בדרך לרפו',
+    synced: 'ברפו ✓',
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const ui = new Map();          // section id -> { doc, els, dirty, timer, chain }
+  let db = null, canWrite = true;
+
+  // ---------- helpers ----------
+  const words = (text) => text.replace(/\[[^\]]*\]/g, ' ').replace(/\/+/g, ' ')
+    .split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
+  const minutes = (n) => (n ? `~${(n / WPM).toFixed(1)} דק׳` : '');
+  const clock = (ms) => new Date(ms).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+
+  function stateOf(u) {
+    const body = u.els.ta.value, d = u.doc;
+    if (!body.trim() && !d.approvedBody) return 'empty';
+    if (body !== (d.approvedBody ?? '')) return 'edited';
+    if ((d.approvedBody ?? '') !== (d.syncedBody ?? '')) return 'pending';
+    return 'synced';
+  }
+
+  function banner(tone, html) {
+    const b = $('banner');
+    b.dataset.tone = tone; b.innerHTML = html; b.hidden = !html;
+  }
+
+  // ---------- rendering ----------
+  function buildSheet(id, d) {
+    const el = document.createElement('article');
+    el.className = 'sheet';
+    el.innerHTML = `
+      <div class="sheet-head">
+        <span class="label"></span><h2></h2><span class="pill"></span><span class="meta"></span>
+      </div>
+      <div class="tools" role="toolbar" aria-label="סימונים"></div>
+      <textarea spellcheck="false"></textarea>
+      <div class="sheet-foot">
+        <span class="saved"></span>
+        <button class="btn ghost revert" type="button">ביטול שינויים</button>
+        <button class="btn primary approve" type="button">אישור</button>
+      </div>`;
+    const els = {
+      root: el, label: el.querySelector('.label'), title: el.querySelector('h2'), pill: el.querySelector('.pill'),
+      meta: el.querySelector('.meta'), tools: el.querySelector('.tools'), ta: el.querySelector('textarea'),
+      saved: el.querySelector('.saved'), revert: el.querySelector('.revert'), approve: el.querySelector('.approve'),
+    };
+    els.ta.id = `text-${id}`;
+    els.ta.setAttribute('aria-label', `${d.label} ${d.title}`);
+    els.ta.placeholder = 'עוד לא נכתב. אפשר להתחיל לכתוב כאן, או לבקש מ-Claude טיוטה בצ׳אט.';
+    els.ta.value = d.body ?? '';
+    TOOLS.forEach((t) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn';
+      b.innerHTML = `${t.label}<span>${t.hint}</span>`;
+      b.addEventListener('click', () => insertAt(id, t));
+      els.tools.append(b);
+    });
+
+    const u = { id, doc: d, els, dirty: false, timer: 0, chain: Promise.resolve() };
+    els.ta.addEventListener('input', () => { autosize(els.ta); u.dirty = true; clearTimeout(u.timer); u.timer = setTimeout(() => save(u), SAVE_DELAY); refresh(u); });
+    els.ta.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(u); } });
+    els.revert.addEventListener('click', () => revert(u));
+    els.approve.addEventListener('click', () => approve([u]));
+    ui.set(id, u);
+    return el;
+  }
+
+  function autosize(ta) { ta.style.height = 'auto'; ta.style.height = `${ta.scrollHeight + 2}px`; }
+
+  function refresh(u) {
+    const { els, doc } = u, st = stateOf(u), n = words(els.ta.value);
+    els.label.textContent = doc.label;
+    els.title.textContent = doc.title;
+    els.pill.dataset.state = st;
+    els.pill.textContent = STATE_LABEL[st];
+    els.meta.textContent = n ? `${n} מילים · ${minutes(n)}` : '';
+    els.saved.textContent = u.dirty ? 'שומר…'
+      : doc.syncedAt && st === 'synced' ? `נכנס לרפו ב-${clock(doc.syncedAt)}`
+      : doc.approvedAt && st === 'pending' ? `אושר ב-${clock(doc.approvedAt)}`
+      : doc.updatedAt ? `טיוטה נשמרה ב-${clock(doc.updatedAt)}` : '';
+    els.approve.disabled = !canWrite || st !== 'edited';
+    els.revert.disabled = !canWrite || st !== 'edited' || doc.approvedBody == null;
+    els.ta.readOnly = !canWrite;
+    els.tools.hidden = !canWrite;
+    refreshSummary();
+  }
+
+  function refreshSummary() {
+    const all = [...ui.values()], by = (s) => all.filter((u) => stateOf(u) === s).length;
+    const edited = by('edited'), pending = by('pending'), synced = by('synced');
+    const total = all.reduce((n, u) => n + words(u.els.ta.value), 0);
+    $('summary').innerHTML = [
+      edited ? `<b>${edited}</b> עם שינויים שלא אושרו` : '',
+      pending ? `<b>${pending}</b> בדרך לרפו` : '',
+      synced ? `<b>${synced}</b> ברפו` : '',
+      total ? `סה״כ ${total} מילים, ${minutes(total)}` : '',
+    ].filter(Boolean).join(' · ') || 'אין עדיין טקסט';
+    $('approve-all').disabled = !canWrite || !edited;
+    $('approve-all').textContent = edited > 1 ? `אישור כל השינויים (${edited})` : 'אישור כל השינויים';
+  }
+
+  // ---------- writes (one at a time per document) ----------
+  function write(u, patch) {
+    u.chain = u.chain.catch(() => {}).then(() => db.doc(`sections/${u.id}`).update(patch));
+    return u.chain;
+  }
+
+  async function save(u) {
+    clearTimeout(u.timer);
+    const body = u.els.ta.value;
+    if (body === (u.doc.body ?? '')) { u.dirty = false; refresh(u); return; }
+    try {
+      await write(u, { body, updatedAt: Date.now() });
+      if (u.els.ta.value === body) u.dirty = false;
+    } catch (e) {
+      banner('warn', `השמירה של ${u.doc.label} נכשלה (${e.code || 'error'}). הטקסט עדיין כאן. נסה שוב בעוד רגע.`);
+      throw e;
+    } finally { refresh(u); }
+  }
+
+  function insertAt(id, t) {
+    const u = ui.get(id), ta = u.els.ta;
+    const s = ta.selectionStart, e = ta.selectionEnd;
+    ta.setRangeText(t.ins, s, e, 'end');
+    if (t.caret) ta.selectionStart = ta.selectionEnd = s + t.caret;
+    ta.focus();
+    ta.dispatchEvent(new Event('input'));
+  }
+
+  async function revert(u) {
+    u.els.ta.value = u.doc.approvedBody ?? '';
+    autosize(u.els.ta);
+    u.dirty = true; refresh(u);
+    await save(u).catch(() => {});
+  }
+
+  async function approve(list) {
+    const ids = [];
+    try {
+      for (const u of list) {
+        await save(u);
+        await write(u, { approvedBody: u.els.ta.value, approvedAt: Date.now() });
+        ids.push(u.id);
+      }
+    } catch (e) {
+      banner('warn', `האישור לא נשמר (${e.code || 'error'}). נסה שוב.`);
+      return;
+    }
+    await notifyClaude(ids);
+  }
+
+  // ---------- tell the Claude session to pull approved text into the repo ----------
+  const FALLBACK = 'כדי להכניס לרפו, כתוב ל-Claude בצ׳אט: <code>אישרתי בעורך</code>';
+
+  async function notifyClaude(ids) {
+    const names = ids.map((id) => ui.get(id).doc.label).join(', ');
+    banner('', `${names} אושר. שולח ל-Claude…`);
+    const mcp = window.claude?.use ? await window.claude.use('mcp') : null;
+    if (!mcp || TRIGGER_ID.startsWith('__')) { banner('warn', `${names} אושר ונשמר. ${FALLBACK}`); return; }
+    try {
+      await mcp.callTool(REMOTE, 'fire_trigger', {
+        trigger_id: TRIGGER_ID,
+        text: `Approved in the script editor: ${ids.join(', ')}`,
+      });
+      banner('ok', `${names} אושר ונשלח ל-Claude. הסטטוס יתחלף ל"ברפו ✓" כשהטקסט ייכנס לרפו.`);
+    } catch (e) {
+      const why = {
+        not_in_manifest: 'לא אישרת לדף לפנות ל-Claude Code Remote.',
+        server_not_connected: `החיבור ${REMOTE} לא מחובר בחשבון שלך.`,
+        needs_reauth: `צריך לחבר מחדש את ${REMOTE} בהגדרות claude.ai, תחת Connectors.`,
+        blocked_by_policy: 'מדיניות הארגון חוסמת את הפנייה.',
+        tool_error: `Claude Code Remote החזיר שגיאה: ${e.message || ''}`,
+      }[e.code] || 'השליחה ל-Claude לא הצליחה.';
+      banner('warn', `${names} אושר ונשמר, אבל ${why} ${FALLBACK}`);
+    }
+  }
+
+  // ---------- boot ----------
+  function onSections(snap) {
+    const list = $('sections');
+    $('empty').hidden = !snap.empty;
+    if (snap.empty) $('empty').textContent = 'עוד אין חלקים בתסריט. Claude יוסיף אותם.';
+    const docs = snap.docs.slice().sort((a, b) => (a.data().order ?? 0) - (b.data().order ?? 0));
+    docs.forEach((ds) => {
+      const d = ds.data();
+      let u = ui.get(ds.id);
+      if (!u) { list.append(buildSheet(ds.id, d)); u = ui.get(ds.id); autosize(u.els.ta); }
+      u.doc = d;
+      // Take remote text only when this view has no unsaved typing in that section.
+      if (!u.dirty && document.activeElement !== u.els.ta && u.els.ta.value !== (d.body ?? '')) {
+        u.els.ta.value = d.body ?? ''; autosize(u.els.ta);
+      }
+      refresh(u);
+    });
+    docs.forEach((ds) => list.append(ui.get(ds.id).els.root)); // keep order
+  }
+
+  async function start() {
+    $('approve-all').addEventListener('click', () => approve([...ui.values()].filter((u) => stateOf(u) === 'edited')));
+    const use = window.claude?.use;
+    db = use ? await use('db') : null;
+    if (!db) {
+      $('empty').textContent = 'העורך עובד רק כשהוא פתוח ב-claude.ai ואתה מחובר.';
+      $('summary').textContent = 'לא זמין בתצוגה הזו';
+      return;
+    }
+    const user = await use('user');
+    const may = user ? await user.can('data.write') : null;
+    canWrite = may !== false;
+    if (!canWrite) banner('', 'יש לך הרשאת צפייה בלבד בעורך הזה.');
+    db.collection('sections').onSnapshot(onSections, (e) => {
+      banner('warn', `החיבור לתסריט נותק (${e.code}). רענן את הדף.`);
+    });
+  }
+
+  start();
+})();
+</script>
