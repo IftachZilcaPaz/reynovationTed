@@ -74,10 +74,17 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .meta dd { margin: 0; color: var(--fg); min-width: 0; }
 .meta dd.how { color: var(--muted); }
 
-.combine { border-top: 1px solid var(--line); padding-top: 22px; display: grid; gap: 8px; max-width: 70ch; }
-.combine h2 { font-family: var(--display); font-weight: 700; font-size: 40px; line-height: .95; margin: 0; }
-.combine p, .combine ul { margin: 0; color: var(--muted); }
-.combine li strong { color: var(--fg); font-weight: 500; }
+.feature { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 22px 28px; align-items: start; }
+.feature .screen .tag { font-size: 46px; }
+.feat-meta { display: grid; gap: 12px; min-width: 0; }
+.feat-meta h2 { font-family: var(--display); font-weight: 700; font-size: clamp(40px, 5vw, 56px); line-height: .9; margin: 0; text-wrap: balance; }
+.feat-meta p { margin: 0; color: var(--muted); max-width: 52ch; }
+.beats { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.beats li { display: grid; grid-template-columns: 5.2em 1fr; gap: 10px; padding-block: 7px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.beats time { font-family: var(--mono); font-size: 12px; color: var(--accent); padding-top: 2px; direction: ltr; text-align: end; font-variant-numeric: tabular-nums; }
+.feat-meta .btn.primary { justify-self: start; }
+.section-title { font-family: var(--display); font-weight: 700; font-size: 40px; line-height: .95; margin: 0; padding-top: 22px; border-top: 1px solid var(--line); }
+@media (max-width: 900px) { .feature { grid-template-columns: minmax(0, 1fr); } }
 
 dialog {
   width: min(1180px, 100% - 32px); max-width: none; padding: 0; border: 1px solid var(--line);
@@ -95,13 +102,13 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
 .timeline .bar { position: absolute; inset-inline: 0; top: 0; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
 .timeline .fill { height: 100%; width: 0; background: var(--accent); }
 .timeline .mark { position: absolute; top: 10px; transform: translateX(-50%); white-space: nowrap; direction: rtl; }
-.timeline .mark:first-of-type { transform: none; }
-.timeline .mark:last-of-type { transform: translateX(-100%); }
+.timeline .mark:first-child { transform: none; }
+.timeline .mark:last-child { transform: translateX(-100%); }
 
 @media (max-width: 520px) {
   .controls .src { margin-inline-start: 0; flex-basis: 100%; }
   .timeline { height: 50px; }
-  .timeline .mark:nth-of-type(odd) { top: 26px; }
+  .timeline .mark:nth-child(even) { top: 26px; }
 }
 </style>
 
@@ -109,7 +116,7 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
   <header>
     <div class="eyebrow">פתיח · הנפשת התמונה</div>
     <h1>הממ״ד<span class="num">07.10</span></h1>
-    <p class="lede">שש דרכים להחיות את התמונה מאותו בוקר, כולן רצות כאן בזמן אמת. כרגע מוצגת <strong>תמונת דמה</strong> (ממ״ד משורטט). העלה את התמונה האמיתית והיא תופיע בכל שש האפשרויות. התמונה נשארת במכשיר שלך ולא נשלחת לשום מקום.</p>
+    <p class="lede">הגרסה המשולבת שבחרת למעלה, ומתחתיה שש האפשרויות המקוריות, כולן רצות כאן בזמן אמת. כרגע מוצגת <strong>תמונת דמה</strong> (ממ״ד משורטט). העלה את התמונה האמיתית והיא תופיע בכל שש האפשרויות. התמונה נשארת במכשיר שלך ולא נשלחת לשום מקום.</p>
   </header>
 
   <div class="controls" role="group" aria-label="הגדרות תצוגה">
@@ -122,17 +129,31 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     <span class="src" id="src">מקור: תמונת דמה</span>
   </div>
 
+  <section class="feature" aria-labelledby="feat-title">
+    <div class="screen">
+      <canvas id="feat" width="960" height="540" role="img" aria-label="תצוגה חיה: מבול התראות עם גליץ׳ וזיכרון מהבהב"></canvas>
+      <span class="tag" aria-hidden="true">ו+ב+א</span>
+    </div>
+    <div class="feat-meta">
+      <div class="eyebrow">הגרסה שבחרת · ו + ב + א</div>
+      <h2 id="feat-title">מבול התראות בזיכרון שנשבר</h2>
+      <p>התמונה עולה כמו זיכרון ישן ומהבהב. ההתראות מתחילות להיערם, כל אחת קורעת את הפריים בגליץ׳, והגליצ׳ים מתחזקים ככל שההתראות מאיצות. בסוף הכל קורס, ושקט.</p>
+      <ol class="beats">
+        <li><time>0:00</time><span>חושך ושקט.</span></li>
+        <li><time>0:01.5</time><span>התמונה עולה, מהבהבת וגרעינית.</span></li>
+        <li><time>0:02.5</time><span>התראה ראשונה: פינג, והפריים נקרע לרגע.</span></li>
+        <li><time>0:05</time><span>ההתראות מאיצות, והגליץ׳ מחריף בכל אחת.</span></li>
+        <li><time>0:10.1</time><span>הכל קורס לגליץ׳ אחד גדול.</span></li>
+        <li><time>0:10.7</time><span>שחור. שקט מוחלט.</span></li>
+        <li><time>0:12.5</time><span>אתה מדבר: ״7 באוקטובר. שדרות. הייתי בממ״ד.״</span></li>
+      </ol>
+      <button class="btn primary" id="feat-play" type="button">▶ נגן כרצף פתיחה, עם סאונד</button>
+    </div>
+  </section>
+
+  <h2 class="section-title">שש האפשרויות המקוריות</h2>
   <section class="grid" id="grid" aria-label="אפשרויות אינטרו"></section>
 
-  <section class="combine">
-    <h2>אפשר גם לשלב</h2>
-    <ul>
-      <li><strong>ה ואז ו:</strong> הדופק האדום כבסיס שקט, וההתראות מתחילות להיערם בשניות האחרונות, עד חיתוך לשחור.</li>
-      <li><strong>א עם פרצים של ב:</strong> זיכרון מהבהב ורגוע, שנקרע פעם-פעמיים בגליץ׳ חד.</li>
-      <li><strong>ג לבד:</strong> הכי ״תיעודי״. מתאים אם התמונה עצמה חזקה ולא צריכה עזרה.</li>
-    </ul>
-    <p>כתוב לי איזו אות, או איזה שילוב, ונבנה ממנה את הגרסה הסופית.</p>
-  </section>
 </div>
 
 <dialog id="dlg" aria-labelledby="dlg-title">
@@ -140,16 +161,14 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     <div class="dlg-head">
       <h2 id="dlg-title"></h2>
       <button class="btn primary" id="seq" type="button">▶ נגן כרצף פתיחה</button>
+      <label class="field" for="sound" id="sound-wrap"><input type="checkbox" id="sound" checked> סאונד</label>
       <button class="btn" id="fs" type="button">מסך מלא</button>
       <button class="btn" id="close" type="button">סגירה</button>
     </div>
     <canvas id="big" width="1280" height="720"></canvas>
     <div class="timeline" aria-hidden="true">
       <div class="bar"><div class="fill" id="fill"></div></div>
-      <span class="mark" style="left:0%">0:00 חושך</span>
-      <span class="mark" style="left:13.6%">0:01.5 התמונה עולה</span>
-      <span class="mark" style="left:81.8%">0:09 חיתוך לשחור</span>
-      <span class="mark" style="left:100%">0:11 אתה מדבר</span>
+      <div id="marks"></div>
     </div>
   </div>
 </dialog>
@@ -159,7 +178,8 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
   'use strict';
 
   // ---------- constants & tiny helpers ----------
-  const W = 960, H = 540, FPS = 24, SEQ_LEN = 11;
+  const W = 960, H = 540, FPS = 24;
+  const SEQ_DEFAULT = { cut: 9, end: 11, marks: [[1.5, 'התמונה עולה'], [9, 'חיתוך לשחור']] };
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const rand = (a = 1, b) => b === undefined ? Math.random() * a : a + Math.random() * (b - a);
   const mk = (w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h });
@@ -306,6 +326,192 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     x.globalCompositeOperation = 'source-over';
   }
 
+  // Glitch the frame already on screen (image + overlays together), not just the source photo.
+  const BUFS = new Map();
+  function buf(w, h, id) {
+    const key = `${id}:${w}x${h}`;
+    if (!BUFS.has(key)) { const c = mk(w, h); BUFS.set(key, { c, x: c.getContext('2d') }); }
+    return BUFS.get(key);
+  }
+  function snapshot(x, w, h) {
+    const B = buf(w, h, 'a');
+    B.x.globalCompositeOperation = 'copy'; B.x.drawImage(x.canvas, 0, 0);
+    B.x.globalCompositeOperation = 'source-over';
+    return B.c;
+  }
+  function frameSplit(x, w, h, dx) {
+    const src = snapshot(x, w, h), T = buf(w, h, 'b');
+    x.fillStyle = '#000'; x.fillRect(0, 0, w, h);
+    [['#ff0000', dx], ['#00ff00', 0], ['#0000ff', -dx]].forEach(([col, off]) => {
+      T.x.globalCompositeOperation = 'copy'; T.x.drawImage(src, 0, 0);
+      T.x.globalCompositeOperation = 'multiply'; T.x.fillStyle = col; T.x.fillRect(0, 0, w, h);
+      T.x.globalCompositeOperation = 'source-over';
+      x.globalCompositeOperation = 'lighter'; x.drawImage(T.c, off, 0);
+    });
+    x.globalCompositeOperation = 'source-over';
+  }
+  function frameTears(x, w, h, n, amp) {
+    const src = snapshot(x, w, h), s = w / 960;
+    for (let i = 0; i < n; i++) {
+      const y = rand(h), hh = rand(2, 40) * s;
+      x.drawImage(src, 0, y, w, hh, rand(-amp, amp), y, w, hh);
+    }
+  }
+  function filmDamage(x, w, h, k) {
+    x.strokeStyle = 'rgba(230,225,210,.35)'; x.lineWidth = 1;
+    for (let i = 0, n = (Math.random() * 3 * k) | 0; i < n; i++) {
+      const sx = rand(w); x.beginPath(); x.moveTo(sx, 0); x.lineTo(sx + rand(-3, 3), h); x.stroke();
+    }
+    x.fillStyle = 'rgba(0,0,0,.55)';
+    for (let i = 0; i < 4 * k; i++) { x.beginPath(); x.arc(rand(w), rand(h), rand(.5, 2.2) * w / 960, 0, 7); x.fill(); }
+  }
+
+  // Stack of red-alert notifications, newest on top; the newest slides in over `since` seconds.
+  function drawAlerts(x, w, h, n, since) {
+    const s = w / 960;
+    const cw = Math.min(w - 40 * s, 540 * s), ch = 80 * s, gap = 10 * s, cx = (w - cw) / 2;
+    x.save(); setDir(x, 'rtl');
+    for (let i = Math.max(0, n - 8); i < n; i++) {
+      const age = n - 1 - i, y0 = 22 * s + age * (ch + gap);
+      if (y0 > h) continue;
+      const a = i === n - 1 ? clamp(since / .12, 0, 1) : 1;
+      const y = y0 - (1 - a) * 30 * s;
+      x.globalAlpha = a;
+      x.fillStyle = 'rgba(30,30,32,.9)'; rr(x, cx, y, cw, ch, 16 * s); x.fill();
+      x.fillStyle = '#e2362c'; rr(x, cx + cw - 60 * s, y + 18 * s, 44 * s, 44 * s, 10 * s); x.fill();
+      x.fillStyle = '#fff'; x.textAlign = 'center';
+      x.font = `600 ${Math.round(26 * s)}px ${HEB}`; x.fillText('!', cx + cw - 38 * s, y + 49 * s);
+      x.textAlign = 'right';
+      x.font = `600 ${Math.round(22 * s)}px ${HEB}`; x.fillText('צבע אדום · שדרות', cx + cw - 76 * s, y + 35 * s);
+      x.fillStyle = 'rgba(255,255,255,.7)';
+      x.font = `400 ${Math.round(17 * s)}px ${HEB}`; x.fillText('היכנסו למרחב המוגן', cx + cw - 76 * s, y + 61 * s);
+      x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,.5)';
+      x.font = `400 ${Math.round(15 * s)}px ${HEB}`; x.fillText('עכשיו', cx + 18 * s, y + 33 * s);
+    }
+    x.restore();
+  }
+
+  // ---------- sound (Web Audio, synthesized; starts only from a click) ----------
+  let AC = null;
+  const audio = { master: null };
+  function stopAudio() {
+    if (!audio.master) return;
+    try { audio.master.gain.cancelScheduledValues(0); audio.master.gain.value = 0; audio.master.disconnect(); } catch (_) { /* already stopped */ }
+    audio.master = null;
+  }
+  function startAudio(fx, offset) {
+    stopAudio();
+    if (!fx.sound || !$('sound').checked) return;
+    try {
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+      AC.resume();
+      const master = AC.createGain(); master.gain.value = .8; master.connect(AC.destination);
+      audio.master = master;
+      fx.sound(AC, master, AC.currentTime + offset, state.k);
+    } catch (_) { /* audio unavailable: play silently */ }
+  }
+  let NOISE_BUF = null;
+  function noiseBuffer(ac) {
+    if (NOISE_BUF) return NOISE_BUF;
+    const b = ac.createBuffer(1, ac.sampleRate, ac.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return (NOISE_BUF = b);
+  }
+  function ping(ac, out, at, vol) {
+    [[1318.5, 1], [1975.5, .45]].forEach(([f, v], i) => {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      const t = at + i * .07;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol * v, t + .006);
+      g.gain.exponentialRampToValueAtTime(.0001, t + .45);
+      o.connect(g).connect(out); o.start(t); o.stop(t + .5);
+    });
+  }
+  function crackle(ac, out, at, dur, vol) {
+    const src = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain();
+    src.buffer = noiseBuffer(ac); bp.type = 'bandpass'; bp.frequency.value = 2400; bp.Q.value = .7;
+    g.gain.setValueAtTime(0, at);
+    for (let t = 0; t < dur; t += .016) g.gain.setValueAtTime(Math.random() < .6 ? vol * Math.random() : 0, at + t);
+    g.gain.setValueAtTime(0, at + dur);
+    src.connect(bp).connect(g).connect(out);
+    src.start(at, rand(.5)); src.stop(at + dur + .02);
+  }
+  function drone(ac, out, from, peakAt, cutAt) {
+    const o = ac.createOscillator(), lp = ac.createBiquadFilter(), g = ac.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(49, from); o.frequency.linearRampToValueAtTime(58, peakAt);
+    lp.type = 'lowpass'; lp.frequency.setValueAtTime(140, from); lp.frequency.linearRampToValueAtTime(420, peakAt);
+    g.gain.setValueAtTime(0, from); g.gain.linearRampToValueAtTime(.09, peakAt); g.gain.setValueAtTime(0, cutAt);
+    o.connect(lp).connect(g).connect(out); o.start(from); o.stop(cutAt + .05);
+  }
+
+  // Arrival times accelerate: each gap is ~84% of the previous.
+  function arrivals(k) {
+    const out = [], speed = .6 + .4 * k;
+    for (let tm = 1, gap = .95; tm < 8.4; tm += Math.max(.14, gap) / speed, gap *= .84) out.push(tm);
+    return out;
+  }
+
+  // ו + ב + א: alerts stack over a flickering memory; every arrival tears the frame, harder each time.
+  const COMBO = {
+    key: 'combo', tag: 'ו+ב+א', name: 'מבול התראות בזיכרון שנשבר',
+    seq: { cut: 10.7, end: 12.5, marks: [[1.5, 'התמונה עולה'], [10.1, 'קריסה ושחור']] },
+    css: () => 'contrast(1.08)',
+    draw(x, w, h, t, k) {
+      const s = w / 960, u = t % 10, arr = arrivals(k);
+      if (u >= 9.2) { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); return; }
+      let n = 0; while (n < arr.length && arr[n] <= u) n++;
+      const since = n ? u - arr[n - 1] : Infinity;
+
+      const jump = Math.random() < .05 * k ? rand(-1, 1) * h * .025 : 0;
+      x.save(); x.translate(0, jump);
+      x.fillStyle = '#000'; x.fillRect(0, -h, w, h * 3);
+      const z = 1.03 + u * .004, dw = w * z, dh = h * z, ox = (w - dw) / 2, oy = (h - dh) / 2;
+      x.drawImage(S.base, ox, oy, dw, dh);
+      x.globalAlpha = .6; x.drawImage(S.gray, ox, oy, dw, dh); x.globalAlpha = 1;
+      x.globalCompositeOperation = 'multiply'; x.fillStyle = 'rgb(255,232,205)'; x.fillRect(0, 0, w, h);
+      x.globalCompositeOperation = 'source-over';
+      x.fillStyle = `rgba(0,0,0,${.12 + Math.min(n, 8) * .03})`; x.fillRect(0, 0, w, h);
+      drawAlerts(x, w, h, n, since);
+      x.restore();
+
+      const b = .12 * Math.sin(t * 21) * Math.sin(t * 5.3) + rand(-.1, .1) * k;
+      x.fillStyle = b < 0 ? `rgba(0,0,0,${clamp(-b * 1.6, 0, 1)})` : `rgba(255,240,220,${clamp(b * .5, 0, 1)})`;
+      x.fillRect(0, 0, w, h);
+      if (Math.random() < .02 * k) { x.fillStyle = 'rgba(0,0,0,.7)'; x.fillRect(0, 0, w, h); }
+
+      const late = u > 8.6;
+      const gdur = Math.min(.25, .08 + n * .012);
+      if ((n && since < gdur) || late || (n > 8 && Math.random() < .05 * k)) {
+        const amp = late ? 3 : Math.min(2.2, .6 + n * .1);
+        frameSplit(x, w, h, rand(6, 14) * amp * s * k);
+        frameTears(x, w, h, (2 + amp * 4) | 0, 50 * amp * s * k);
+        if (amp > 1.2) {
+          x.globalCompositeOperation = 'difference';
+          for (let i = 0; i < amp * k; i++) {
+            x.fillStyle = Math.random() < .5 ? '#00e5ff' : '#ff2bd6';
+            x.fillRect(rand(w), rand(h), rand(20, 180) * s, rand(4, 22) * s);
+          }
+          x.globalCompositeOperation = 'source-over';
+        }
+        if (late && Math.random() < .35) { x.fillStyle = `rgba(0,0,0,${rand(.4, .9)})`; x.fillRect(0, 0, w, h); }
+      }
+
+      grain(x, w, h, .34 * k);
+      filmDamage(x, w, h, k);
+      scan(x, w, h, .12);
+      vignette(x, w, h, 1);
+    },
+    sound(ac, out, t0, k) {
+      const arr = arrivals(k);
+      drone(ac, out, t0, t0 + 8.6, t0 + 9.2);
+      arr.forEach((a, i) => {
+        ping(ac, out, t0 + a, .16);
+        crackle(ac, out, t0 + a, Math.min(.25, .08 + i * .012), .05 + .012 * Math.min(i, 12));
+      });
+      crackle(ac, out, t0 + 8.6, .6, .28);
+    },
+  };
+
   // ---------- the six treatments ----------
   const FX = [
     {
@@ -325,12 +531,7 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
         if (Math.random() < .025 * k) { x.fillStyle = 'rgba(0,0,0,.75)'; x.fillRect(0, 0, w, h); }
         if (Math.random() < .02 * k) { x.fillStyle = 'rgba(255,240,220,.22)'; x.fillRect(0, 0, w, h); }
         grain(x, w, h, .38 * k);
-        x.strokeStyle = 'rgba(230,225,210,.35)'; x.lineWidth = 1;
-        for (let i = 0, n = (Math.random() * 3 * k) | 0; i < n; i++) {
-          const sx = rand(w); x.beginPath(); x.moveTo(sx, 0); x.lineTo(sx + rand(-3, 3), h); x.stroke();
-        }
-        x.fillStyle = 'rgba(0,0,0,.55)';
-        for (let i = 0; i < 4 * k; i++) { x.beginPath(); x.arc(rand(w), rand(h), rand(.5, 2.2) * w / 960, 0, 7); x.fill(); }
+        filmDamage(x, w, h, k);
         vignette(x, w, h, 1);
       },
     },
@@ -452,27 +653,7 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
         const since = u - start - (n - 1) * interval;
         if (n > 0 && since < .09) rgbSplit(x, w, h, 12 * s * k); else x.drawImage(S.base, 0, 0, w, h);
         x.fillStyle = `rgba(0,0,0,${.22 + Math.min(n, 12) * .035})`; x.fillRect(0, 0, w, h);
-
-        const cw = Math.min(w - 40 * s, 540 * s), ch = 80 * s, gap = 10 * s, cx = (w - cw) / 2;
-        x.save(); setDir(x, 'rtl');
-        for (let i = 0; i < n; i++) {
-          const age = n - 1 - i, y0 = 22 * s + age * (ch + gap);
-          if (y0 > h) continue;
-          const a = i === n - 1 ? clamp(since / .12, 0, 1) : 1;
-          const y = y0 - (1 - a) * 30 * s;
-          x.globalAlpha = a;
-          x.fillStyle = 'rgba(30,30,32,.9)'; rr(x, cx, y, cw, ch, 16 * s); x.fill();
-          x.fillStyle = '#e2362c'; rr(x, cx + cw - 60 * s, y + 18 * s, 44 * s, 44 * s, 10 * s); x.fill();
-          x.fillStyle = '#fff'; x.textAlign = 'center';
-          x.font = `600 ${Math.round(26 * s)}px ${HEB}`; x.fillText('!', cx + cw - 38 * s, y + 49 * s);
-          x.textAlign = 'right';
-          x.font = `600 ${Math.round(22 * s)}px ${HEB}`; x.fillText('צבע אדום · שדרות', cx + cw - 76 * s, y + 35 * s);
-          x.fillStyle = 'rgba(255,255,255,.7)';
-          x.font = `400 ${Math.round(17 * s)}px ${HEB}`; x.fillText('היכנסו למרחב המוגן', cx + cw - 76 * s, y + 61 * s);
-          x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,.5)';
-          x.font = `400 ${Math.round(15 * s)}px ${HEB}`; x.fillText('עכשיו', cx + 18 * s, y + 33 * s);
-        }
-        x.restore();
+        drawAlerts(x, w, h, n, since);
         if (u > loop - 1.2) { x.fillStyle = `rgba(0,0,0,${(u - (loop - 1.2)) / 1.2})`; x.fillRect(0, 0, w, h); }
       },
     },
@@ -511,7 +692,8 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
 
   function renderSequence(canvas, fx, tt) {
     const x = canvas.getContext('2d'), w = canvas.width, h = canvas.height;
-    if (tt < 1.5 || tt > 9) { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); canvas.style.filter = 'none'; return; }
+    const cut = (fx.seq || SEQ_DEFAULT).cut;
+    if (tt < 1.5 || tt > cut) { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); canvas.style.filter = 'none'; return; }
     render(canvas, fx, tt - 1.5);
     if (tt < 3) { x.fillStyle = `rgba(0,0,0,${1 - (tt - 1.5) / 1.5})`; x.fillRect(0, 0, w, h); }
   }
@@ -524,9 +706,10 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     if (dlg.open && state.active) {
       if (state.seqStart !== null) {
         const tt = (performance.now() - state.seqStart) / 1000;
-        $('fill').style.width = `${clamp(tt / SEQ_LEN, 0, 1) * 100}%`;
+        const end = (state.active.seq || SEQ_DEFAULT).end;
+        $('fill').style.width = `${clamp(tt / end, 0, 1) * 100}%`;
         renderSequence($('big'), state.active, tt);
-        if (tt > SEQ_LEN) state.seqStart = null;
+        if (tt > end) state.seqStart = null;
       } else {
         render($('big'), state.active, t);
       }
@@ -558,6 +741,10 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
       entries.forEach((e) => e.isIntersecting ? visible.add(e.target) : visible.delete(e.target));
     }, { rootMargin: '120px' });
 
+    io.observe($('feat'));
+    cards.push({ fx: COMBO, canvas: $('feat') });
+    $('feat-play').addEventListener('click', () => { openDialog(COMBO); playSequence(); });
+
     FX.forEach((fx) => {
       const art = document.createElement('article');
       art.className = 'opt';
@@ -583,13 +770,35 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     });
   }
 
+  const fmtTime = (sec) => `0:${String(Math.floor(sec)).padStart(2, '0')}${sec % 1 ? '.' + Math.round((sec % 1) * 10) : ''}`;
+
+  function buildTimeline(fx) {
+    const seq = fx.seq || SEQ_DEFAULT;
+    const marks = [[0, 'חושך'], ...seq.marks, [seq.end, 'אתה מדבר']];
+    $('marks').replaceChildren(...marks.map(([sec, label]) => {
+      const m = document.createElement('span');
+      m.className = 'mark';
+      m.style.left = `${(sec / seq.end) * 100}%`;
+      m.textContent = `${fmtTime(sec)} ${label}`;
+      return m;
+    }));
+  }
+
   function openDialog(fx) {
+    stopAudio();
     state.active = fx;
     state.seqStart = null;
     $('fill').style.width = '0';
     $('dlg-title').textContent = `${fx.tag} · ${fx.name}`;
-    $('dlg').showModal();
+    $('sound-wrap').hidden = !fx.sound;
+    buildTimeline(fx);
+    if (!$('dlg').open) $('dlg').showModal();
     renderStill();
+  }
+
+  function playSequence() {
+    state.seqStart = performance.now();
+    startAudio(state.active, 1.5);
   }
 
   function setSource(label, paint) {
@@ -634,10 +843,11 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     if (state.paused) state.pausedAt = performance.now();
     syncPlay();
 
-    $('seq').addEventListener('click', () => { state.seqStart = performance.now(); });
+    $('seq').addEventListener('click', playSequence);
+    $('sound').addEventListener('change', (e) => { if (!e.target.checked) stopAudio(); });
     $('close').addEventListener('click', () => $('dlg').close());
     $('dlg').addEventListener('click', (e) => { if (e.target === $('dlg')) $('dlg').close(); });
-    $('dlg').addEventListener('close', () => { state.active = null; state.seqStart = null; });
+    $('dlg').addEventListener('close', () => { stopAudio(); state.active = null; state.seqStart = null; });
     $('fs').addEventListener('click', () => {
       const c = $('big');
       try { const p = c.requestFullscreen?.(); if (p && p.catch) p.catch(() => {}); } catch (_) { /* fullscreen unavailable */ }
