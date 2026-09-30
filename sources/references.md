@@ -1,4 +1,11 @@
 # מקורות
 
-| טענה | מקור | קישור | הערות |
+| טענה בהרצאה | מקור | קישור | הערות |
 |---|---|---|---|
+| כמעט חצי ממה שאנחנו עושים ביום הוא הרגל (חלק 3) | Wood, Quinn & Kashy (2002), מחקר יומנים; Wendy Wood, *Good Habits, Bad Habits* (2019) | [USC Dornsife](https://dornsife.usc.edu/wendy-wood/good-habits-bad-habits/) · [Behavioral Scientist](https://behavioralscientist.org/good-habits-bad-habits-a-conversation-with-wendy-wood/) | הנתון: כ-43%. יש דיווח על שחזור מ-2026 שמצא יותר (כ-65%), לא נבדק מול המקור |
+| הרגל חדש לוקח בדרך כלל כ-66 יום, בטווח 18–254; פספוס יום לא מאפס (חלק 3) | Lally et al. (2010), *European Journal of Social Psychology* | [Wiley](https://onlinelibrary.wiley.com/doi/abs/10.1002/ejsp.674) · [סיכום](https://www.thebehavioralscientist.com/articles/how-long-to-form-a-habit) | 66 זה חציון, לא ממוצע; מחקר קטן (82 משתתפים), הרגלים פשוטים |
+| ילדים לומדים פחד מצפייה בהורה מפחד (חלק 4) | Askew & Field (2008), "The vicarious learning pathway to fear 40 years on", *Clinical Psychology Review*; מטא-אנליזה 2025 | [PMC מטא-אנליזה](https://pmc.ncbi.nlm.nih.gov/articles/PMC12162801/) · [ResearchGate](https://www.researchgate.net/publication/241695709_Vicarious_Learning_and_Unlearning_of_Fear_in_Childhood_Via_Mother_and_Stranger_Models) | "למידה עקיפה של פחד". הניסוח בהרצאה ("ילד לומד מהפנים של אמא") הוא המחשה, לא ציטוט |
+| 3 מתוך 5: עבודה, שינה, משפחה, חברים, כושר (חלק 5) | Randi Zuckerberg, *Pick Three* (2018) | [Entrepreneur](https://www.entrepreneur.com/starting-a-business/randi-zuckerberg-work-sleep-family-friends-fitness/324713) · [Quartz](https://qz.com/1274601/randi-zuckerbergs-advice-for-achieving-your-life-goals-pick-three) | המקור לנקודה "3 דברים מתוך 5" |
+| וויל סמית: "הדברים הכי טובים בחיים נמצאים בצד השני של האימה" (חלק 5) | Will Smith, סיפור הצניחה החופשית (סרטון ביוטיוב) | [YouTube](https://www.youtube.com/watch?v=7_D72WVFX3g) · [Goalcast](https://www.goalcast.com/will-smith-bliss-other-side-fear/) | בהרצאה בפרפרזה. הקרנת הקליפ עצמו דורשת זכויות |
+| (אופציה) "אי אפשר" נלמד: חוסר אונים נלמד (חלק 4) | Seligman & Maier (1967); Maier & Seligman, "Learned Helplessness at Fifty" (2016) | [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC4920136/) · [Wikipedia](https://en.wikipedia.org/wiki/Learned_helplessness) | ב-2016 החוקרים הפכו את המסקנה: פסיביות היא ברירת המחדל, ושליטה היא מה שצריך ללמוד. כרגע לא בטקסט |
+| פודקסט: "אמא ואבא", צחצוח שיניים, והקושי לתכנת מחדש (חלק 3) | _חסר: שם הפודקסט והמגיש_ | | |
