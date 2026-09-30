@@ -76,6 +76,17 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 
 .feature { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 22px 28px; align-items: start; }
 .feature .screen .tag { font-size: 46px; }
+.feat-stage { display: grid; gap: 10px; min-width: 0; }
+.picks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 520px) { .picks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pick {
+  display: grid; gap: 5px; padding: 0; background: transparent; border: 0; color: var(--muted);
+  font: inherit; font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; cursor: pointer; text-align: start;
+}
+.pick canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; max-width: 100%; background: #000; border: 2px solid var(--line); border-radius: 3px; }
+.pick:hover canvas { border-color: var(--muted); }
+.pick[aria-pressed="true"] { color: var(--accent); }
+.pick[aria-pressed="true"] canvas { border-color: var(--accent); }
 .feat-meta { display: grid; gap: 12px; min-width: 0; }
 .feat-meta h2 { font-family: var(--display); font-weight: 700; font-size: clamp(40px, 5vw, 56px); line-height: .9; margin: 0; text-wrap: balance; }
 .feat-meta p { margin: 0; color: var(--muted); max-width: 52ch; }
@@ -116,23 +127,25 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
   <header>
     <div class="eyebrow">פתיח · הנפשת התמונה</div>
     <h1>הממ״ד<span class="num">07.10</span></h1>
-    <p class="lede">הגרסה המשולבת שבחרת למעלה, ומתחתיה שש האפשרויות המקוריות, כולן רצות כאן בזמן אמת. כרגע מוצגת <strong>תמונת דמה</strong> (ממ״ד משורטט). העלה את התמונה האמיתית והיא תופיע בכל שש האפשרויות. התמונה נשארת במכשיר שלך ולא נשלחת לשום מקום.</p>
+    <p class="lede">הגרסה המשולבת שבחרת, עם <strong>ארבע התמונות מאותו בוקר</strong>. כל תמונה רצה בגרסה משלה מתחת למסך הגדול. לחיצה עליה מעבירה אותה למסך הגדול, לרצף ולשש האפשרויות המקוריות שלמטה. אפשר גם להעלות תמונה אחרת, והיא נשארת במכשיר שלך.</p>
   </header>
 
   <div class="controls" role="group" aria-label="הגדרות תצוגה">
-    <label class="btn primary" for="file">העלאת התמונה שלי</label>
+    <label class="btn" for="file">העלאת תמונה אחרת</label>
     <input class="sr" type="file" id="file" accept="image/*">
-    <button class="btn" id="reset" type="button" hidden>חזרה לתמונת הדמה</button>
     <label class="field" for="intensity">עוצמה <input type="range" id="intensity" min="0.4" max="1.6" step="0.1" value="1"></label>
     <label class="field" for="caption"><input type="checkbox" id="caption"> כיתוב ״שדרות · 07.10״</label>
     <button class="btn" id="play" type="button">השהיה</button>
-    <span class="src" id="src">מקור: תמונת דמה</span>
+    <span class="src" id="src">מקור: טוען תמונות…</span>
   </div>
 
   <section class="feature" aria-labelledby="feat-title">
-    <div class="screen">
-      <canvas id="feat" width="960" height="540" role="img" aria-label="תצוגה חיה: מבול התראות עם גליץ׳ וזיכרון מהבהב"></canvas>
-      <span class="tag" aria-hidden="true">ו+ב+א</span>
+    <div class="feat-stage">
+      <div class="screen">
+        <canvas id="feat" width="960" height="540" role="img" aria-label="תצוגה חיה: מבול התראות עם גליץ׳ וזיכרון מהבהב"></canvas>
+        <span class="tag" aria-hidden="true">ו+ב+א</span>
+      </div>
+      <div class="picks" id="picks" aria-label="בחירת תמונה"></div>
     </div>
     <div class="feat-meta">
       <div class="eyebrow">הגרסה שבחרת · ו + ב + א</div>
@@ -199,9 +212,10 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
   }
 
   // ---------- source image + derived layers ----------
-  const S = {};
+  let S = null; // the source set the current draw call reads from
 
-  function buildSources(paint) {
+  function makeSourceSet(paint) {
+    const S = {};
     const base = mk(W, H), bx = base.getContext('2d', { willReadFrequently: true });
     bx.fillStyle = '#000'; bx.fillRect(0, 0, W, H);
     paint(bx);
@@ -217,7 +231,22 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     S.g = layer((s, o, i) => { o[i + 1] = s[i + 1]; });
     S.b = layer((s, o, i) => { o[i + 2] = s[i + 2]; });
     S.gray = layer((s, o, i) => { o[i] = o[i + 1] = o[i + 2] = 0.3 * s[i] + 0.59 * s[i + 1] + 0.11 * s[i + 2]; });
+    return S;
   }
+
+  const PHOTOS = [
+    { id: 'p1', label: 'תמונה 1', url: 'assets/oct7-1.jpg' },
+    { id: 'p2', label: 'תמונה 2', url: 'assets/oct7-2.jpg' },
+    { id: 'p3', label: 'תמונה 3', url: 'assets/oct7-3.jpg' },
+    { id: 'p4', label: 'תמונה 4', url: 'assets/oct7-4.jpg' },
+  ];
+
+  const loadImage = (url) => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`failed to load ${url}`));
+    img.src = url;
+  });
 
   function coverDraw(x, img) {
     const s = Math.max(W / img.width, H / img.height);
@@ -688,11 +717,14 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     paused: matchMedia('(prefers-reduced-motion: reduce)').matches,
     t0: performance.now(), pausedAt: 0,
     active: null, seqStart: null,
+    sources: [], src: 0,
   };
+  const current = () => state.sources[state.src].set;
   const cards = [];
   const visible = new Set();
 
-  function render(canvas, fx, t) {
+  function render(canvas, fx, t, set = current()) {
+    S = set;
     const x = canvas.getContext('2d');
     fx.draw(x, canvas.width, canvas.height, t, state.k);
     if (state.caption) caption(x, canvas.width, canvas.height);
@@ -724,12 +756,12 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
       }
       return;
     }
-    cards.forEach((c, i) => { if (visible.has(c.canvas)) render(c.canvas, c.fx, t + i * 1.7); });
+    cards.forEach((c) => { if (visible.has(c.canvas)) render(c.canvas, c.fx, t + c.offset, c.set?.()); });
   }
 
   function renderStill() {
     const t = clock();
-    cards.forEach((c, i) => render(c.canvas, c.fx, t + i * 1.7 + 2));
+    cards.forEach((c) => render(c.canvas, c.fx, t + c.offset + 2, c.set?.()));
     if ($('dlg').open && state.active) render($('big'), state.active, t + 2);
   }
 
@@ -750,8 +782,10 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
       entries.forEach((e) => e.isIntersecting ? visible.add(e.target) : visible.delete(e.target));
     }, { rootMargin: '120px' });
 
+    state.io = io;
     io.observe($('feat'));
-    cards.push({ fx: COMBO, canvas: $('feat') });
+    cards.push({ fx: COMBO, canvas: $('feat'), offset: 0 });
+    state.sources.forEach(addPick);
     $('feat-play').addEventListener('click', () => { openDialog(COMBO); playSequence(); });
 
     FX.forEach((fx) => {
@@ -775,7 +809,7 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
       art.querySelector('.expand').addEventListener('click', () => openDialog(fx));
       grid.append(art);
       io.observe(canvas);
-      cards.push({ fx, canvas });
+      cards.push({ fx, canvas, offset: FX.indexOf(fx) * 1.7 });
     });
   }
 
@@ -812,10 +846,31 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     startAudio(state.active, 1.5);
   }
 
-  function setSource(label, paint) {
-    buildSources(paint);
-    $('src').textContent = `מקור: ${label}`;
+  function addPick(source) {
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'pick';
+    btn.innerHTML = `<canvas width="320" height="180" aria-hidden="true"></canvas><span></span>`;
+    btn.querySelector('span').textContent = source.label;
+    btn.addEventListener('click', () => selectSource(state.sources.indexOf(source)));
+    $('picks').append(btn);
+    source.btn = btn;
+    const canvas = btn.querySelector('canvas');
+    state.io.observe(canvas);
+    cards.push({ fx: COMBO, canvas, offset: 0, set: () => source.set });
+  }
+
+  function selectSource(i) {
+    state.src = i;
+    state.sources.forEach((src, j) => src.btn?.setAttribute('aria-pressed', String(j === i)));
+    $('src').textContent = `מקור: ${state.sources[i].label}`;
     renderStill();
+  }
+
+  function addOrReplaceUpload(label, set) {
+    let src = state.sources.find((x) => x.id === 'upload');
+    if (src) { src.set = set; src.label = label; src.btn.querySelector('span').textContent = label; }
+    else { src = { id: 'upload', label, set }; state.sources.push(src); addPick(src); }
+    selectSource(state.sources.indexOf(src));
   }
 
   function loadFile(file) {
@@ -826,9 +881,8 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
-      setSource(file.name, (x) => coverDraw(x, img));
+      addOrReplaceUpload('התמונה שלך', makeSourceSet((x) => coverDraw(x, img)));
       URL.revokeObjectURL(url);
-      $('reset').hidden = false;
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
@@ -839,10 +893,6 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
 
   function wireControls() {
     $('file').addEventListener('change', (e) => loadFile(e.target.files[0]));
-    $('reset').addEventListener('click', () => {
-      setSource('תמונת דמה', drawPlaceholder);
-      $('reset').hidden = true; $('file').value = '';
-    });
     $('intensity').addEventListener('input', (e) => { state.k = +e.target.value; if (state.paused) renderStill(); });
     $('caption').addEventListener('change', (e) => { state.caption = e.target.checked; if (state.paused) renderStill(); });
     const syncPlay = () => { $('play').textContent = state.paused ? 'הפעלה' : 'השהיה'; };
@@ -879,8 +929,13 @@ dialog::backdrop { background: rgba(4,5,6,.86); }
         new Promise((r) => setTimeout(r, 2500)),
       ]);
     } catch (_) { /* fall back to system fonts */ }
-    buildSources(drawPlaceholder);
+    const loaded = await Promise.all(PHOTOS.map((ph) => loadImage(ph.url).then(
+      (img) => ({ ...ph, set: makeSourceSet((x) => coverDraw(x, img)) }),
+      () => ({ ...ph, label: `${ph.label} (לא נטענה)`, set: makeSourceSet(drawPlaceholder) }),
+    )));
+    state.sources = loaded;
     buildCards();
+    selectSource(0);
     wireControls();
     renderStill();
     requestAnimationFrame(tick);
