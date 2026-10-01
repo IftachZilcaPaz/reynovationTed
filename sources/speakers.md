@@ -23,6 +23,31 @@
 | **Judson Brewer** | כבר בהרצאה שלך: טריגר, פעולה, תגמול | TED: *A simple way to break a bad habit* | ✅ |
 | **Lisa Feldman Barrett** | כבר בהרצאה שלך: המוח בונה את הרגשות | TED: *You aren't at the mercy of your emotions* | ✅ |
 
+## מרצים שזה הנושא שלהם: לתכנת את המוח
+
+### מדענים (אפשר לצטט)
+| מי | מה הוא אומר | מה לראות | אמינות |
+|---|---|---|---|
+| **Lara Boyd** | נוירופלסטיות: כל מה שאתה עושה משנה את מבנה המוח. ההרצאה מ-TEDxVancouver 2015, עם יותר מ-25 מיליון צפיות | [*After watching this, your brain will not be the same*](https://www.youtube.com/watch?v=LNHBMFCzznE) | ✅ |
+| **Michael Merzenich** | מחלוצי מחקר הנוירופלסטיות. קורא למוח "soft-wired": לא קשיח, נכתב מחדש כל הזמן | TED 2004: *Growing evidence of brain plasticity*; הספר *Soft-Wired* | ✅ |
+| **David Eagleman** | חוקר מוח: המוח "livewired", מחווט את עצמו מחדש כל הזמן לפי מה שהוא חווה | הספר *Livewired*; TED: *Can we create new senses for humans?* | ✅ |
+| **Andrew Huberman** | פודקאסט ענק על המוח: הרגלים, דופמין, נוירופלסטיות | [פרק 53, הרגלים](https://www.hubermanlab.com/episode/the-science-of-making-and-breaking-habits) | ✅/⚠️ לפעמים מגזים בהמלצות מעשיות |
+| **Rick Hanson** | "Neurons that fire together wire together": מה שחוזרים עליו, נחרט | TEDx: *Hardwiring happiness*; הספר *Hardwiring Happiness* | ✅/⚠️ |
+| **Charles Duhigg** | לולאת ההרגל: רמז, שגרה, תגמול | הספר *The Power of Habit* | ✅ |
+| **Norman Doidge** | סיפורים של אנשים שהמוח שלהם השתנה | הספר *The Brain That Changes Itself* | ✅/⚠️ |
+
+### מרצים ומנטורים שמשתמשים במילה "לתכנת" (במה מצוינת, מדע חלש)
+| מי | מה הוא אומר | מה לראות | אמינות |
+|---|---|---|---|
+| **Jim Kwik** | "המוח שלך הוא מחשב-על, והדיבור הפנימי שלך הוא התוכנה שהוא מריץ" ([מקור](https://ee.linkedin.com/posts/jimkwik_who-else-thinks-our-words-matter-your-activity-7042117641007726592-dEwN)). מאמן מוח, מאמן של ידוענים | הספר *Limitless*; הפודקאסט *Kwik Brain* | ⚠️ |
+| **Shad Helmstetter** | "אבי הדיבור הפנימי". כל אחד מתוכנת מלידה, והמוח מאמין למה שאומרים לו הכי הרבה | הספר [*What to Say When You Talk to Your Self*](https://www.goodreads.com/book/show/321982.What_to_Say_When_You_Talk_to_Yourself) (1986) | ⚠️ ה"75% תכנות שלילי" שלו הוא לא נתון מחקרי |
+| **Marisa Peer** | מטפלת בהיפנוזה, "Rapid Transformational Therapy". המסר: "I am enough", לתכנת מחדש את האמונה הבסיסית | TEDx: *I Am Enough* | ⚠️ |
+| **Richard Bandler** | ממייסדי NLP, "תכנות נוירו-לשוני". השם הכי קרוב לשלך. טוני רובינס למד אצלו | הספרים *Frogs into Princes*, *Using Your Brain for a Change* | ❌ אין תמיכה מחקרית. כדאי להכיר כי הקהל יחשוב עליו |
+| **Bruce Lipton** | "התת-מודע מתוכנת עד גיל 7", "95% מההתנהגות מהתת-מודע" | הספר *The Biology of Belief* | ❌ |
+| **Bob Proctor** | "פרדיגמות": תכנות תת-מודע שקובע תוצאות | הסרט *The Secret* | ❌ |
+
+> **לגבי הבידול שלך:** כל המנטורים האלה משתמשים ב"תכנות" כמטאפורה. אתה מתכנת בפועל. זה היתרון שלך: אתה יכול לומר בדיוק איפה המטאפורה נכונה (ברירות מחדל, הרגלים שרצים לבד) ואיפה היא לא (אין כפתור "שמור" במוח, וכל שינוי לוקח שבועות).
+
 ## מה לגנוב מהם לבמה
 - **Les Brown:** משפט אחד שחוזר שוב ושוב עד שהקהל אומר אותו איתו. אצלך: "אי אפשר. לא עכשיו. מחר. עוד שנה."
 - **Mel Robbins:** כלי אחד פשוט שאנשים לוקחים הביתה ועושים כבר מחר. להרצאה שלך חסר כלי כזה.
