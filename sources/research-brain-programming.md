@@ -39,6 +39,47 @@
 | Schiller et al. (2010), *Nature* | כשזיכרון פחד נשלף, יש חלון שבו אפשר "לעדכן" אותו. [Nature](https://www.nature.com/articles/nature08637) | ⚠️ תוקן ב-2018; [בדיקת שחזור](https://www.sciencedirect.com/science/article/abs/pii/S0010945220301696) מצאה בעיות | לא כעובדה. אם בכלל: "יש חוקרים שבודקים..." |
 | Rachel Yehuda, צאצאי ניצולי שואה (2015) | סימנים אפיגנטיים לטראומה גם אצל הילדים. [Biological Psychiatry](https://www.biologicalpsychiatryjournal.com/article/s0006-3223(15)00652-6/fulltext) | ⚠️ מדגם קטן (32 ניצולים, 22 ילדים) | חזק מאוד לקהל ישראלי ל"קוד שירשנו", אבל רק בזהירות |
 
+## 5. התיישרות: למה כל כך קשה להיות העוף המוזר
+
+### Asch, ניסויי הקווים (1951–1956) ✅
+**המקור:** Asch, S. E. (1956). *Studies of independence and conformity: I. A minority of one against a unanimous majority.* Psychological Monographs, 70(9), 1–70. מאמר קודם: Asch (1951), *Effects of group pressure upon the modification and distortion of judgments*.
+
+**המערך:** סטודנט אחד בחדר עם קבוצה של שתולים. כל אחד אומר בקול איזה מבין שלושה קווים שווה באורכו לקו לדוגמה. ב-12 מתוך 18 הסבבים ("ניסויים קריטיים") השתולים עונים פה אחד תשובה שגויה.
+
+| ממצא | נתון | אימות |
+|---|---|---|
+| טעויות כשעונים לבד (קבוצת ביקורת) | פחות מ-1% | ✅ [Simply Psychology](https://www.simplypsychology.org/asch-conformity.html) |
+| תשובות שהתיישרו עם הרוב השגוי | כשליש (כ-32%–37%, לפי המדידה) | ✅ |
+| השתתפו שהתיישרו לפחות פעם אחת | כ-75% | ✅ |
+| לא נכנעו אף פעם | כרבע | ✅ |
+| גודל הרוב | שתול 1: כ-3%; 2: כ-13%; 3 ומעלה: כ-32%, ומעבר לזה כמעט אין תוספת | ✅ |
+| שותף אחד שעונה נכון | הציות יורד ל-5.5% | ✅ [Psychology Rocks](https://psychologyrocks.org/variables-affecting-conformity-aschs-research/) · [PsychStory](https://www.psychstory.co.uk/social-influence/asch-variables-affecting-conformity) |
+| שותף שעונה תשובה שגויה **אחרת** | הציות יורד לכ-9% | ✅ שם. כלומר מספיק לשבור את האחדות, גם בלי לצדוק |
+| משימה קשה יותר | יותר ציות | ✅ |
+| מספר משתתפים במונוגרפיה מ-1956 | 123 סטודנטים גברים | ⚠️ נתון מקובל, לא אומת מול המקור עצמו |
+
+**הסתייגויות שכדאי להכיר:** Perrin & Spencer (1980) חזרו על הניסוי עם סטודנטים להנדסה בבריטניה ומצאו ציות כמעט אפסי ("ילד של זמנו"). מטא-אנליזה של Bond & Smith (1996) מצאה שהציות בארה"ב ירד מאז שנות החמישים, ושהוא גבוה יותר בתרבויות קולקטיביסטיות. אש עצמו הדגיש דווקא את העצמאות של רוב התשובות. [ניתוח עדכני](https://atticusli.com/replication-crisis/asch-conformity/)
+
+**סרטונים:**
+- [Asch Conformity Experiment](https://www.youtube.com/watch?v=NyDDyT1lDhA): שחזור טלוויזיוני משנות השבעים, לא צילום מקורי מהניסוי.
+- [1950's Solomon Asch Conformity Experiment, and where the theory is today](https://www.youtube.com/watch?v=pgqm8DFs-Og)
+- **"Face the Rear", Candid Camera (1962):** אנשים במעלית מסתובבים לקיר האחורי, כי כולם עשו את זה. מצחיק, קצר, ומושלם לבמה. [Open Culture](https://www.openculture.com/2016/11/the-power-of-conformity-1962-episode-of-candid-camera-reveals-the-psychology-of-riding-elevators.html) · [Atlas Obscura](https://www.atlasobscura.com/articles/watch-these-awkward-elevator-rides-from-an-old-episode-of-candid-camera). ⚠️ הקרנה פומבית דורשת רישיון מבעלי הזכויות של Candid Camera; חלופה: לצלם שחזור משלך.
+
+### קופי ורווט: van de Waal, Borgeaud & Whiten (2013) ✅
+**המקור:** van de Waal, E., Borgeaud, C., & Whiten, A. (2013). *Potent social learning and conformity shape a wild primate's foraging decisions.* **Science, 340(6131), 483–485.** [St Andrews Research Portal](https://research-portal.st-andrews.ac.uk/en/publications/potent-social-learning-and-conformity-shape-a-wild-primates-forag/) · [ResearchGate](https://www.researchgate.net/publication/236339100_Potent_Social_Learning_and_Conformity_Shape_a_Wild_Primate's_Foraging_Decisions)
+
+| ממצא | נתון | אימות |
+|---|---|---|
+| קבוצות ופרטים | 4 קבוצות של קופי ורווט פראיים בדרום אפריקה, 109 פרטים | ✅ [St Andrews](https://news.st-andrews.ac.uk/archive/culture-vultures/) · [Phys.org](https://phys.org/news/2013-04-monkeys-conform-social-norms.html) |
+| האימון | תירס ורוד ותירס כחול; צבע אחד הוטבל בתמצית אלוורה מרה (לא מזיקה). שתי קבוצות למדו להעדיף ורוד ושתיים כחול | ✅ |
+| המבחן | אחרי האימון הוצעו שני הצבעים **בלי** החומר המר, והקופים המשיכו לאכול את הצבע שלמדו | ✅ |
+| גורים | 26 מתוך 27 הגורים שנולדו אכלו רק את הצבע המקומי | ✅ [Phys.org](https://phys.org/news/2013-04-monkeys-conform-social-norms.html) |
+| זכרים שעברו קבוצה | 10 זכרים (6 מכחול לוורוד, 4 מוורוד לכחול). 9 מתוך 10 עברו לצבע המקומי | ✅ |
+| מי לא עבר | הזכר היחיד שהפך לדומיננטי בקבוצה החדשה | ✅ |
+| פרשנות | החוקרים: למידה חברתית וקונפורמיות. יש ויכוח אם זו קונפורמיות ממש או "למידה מהרוב". [Forum, Max Planck](https://pure.mpg.de/rest/items/item_2353718/component/file_2378623/content) | ⚠️ |
+
+**סרטונים:** לא מצאתי סרטון רשמי של הניסוי. יש כתבות ב-[National Geographic](https://www.nationalgeographic.com/science/article/on-copyca-whales-conformist-monkeys-and-animal-cultures), [Scientific American](https://www.scientificamerican.com/article/cultural-copying-and-learning-observed-in-monkey-and-whale-species/) ו-[LiveScience](https://www.livescience.com/29048-vervet-monkeys-eat-like-locals.html). לבמה עדיף איור פשוט: שני צבעי תירס וקופים.
+
 ## ❌ פופולרי, אבל לא לצטט מהבמה כעובדה
 - **"95% מהחיים שלנו מנוהלים על ידי התת-מודע"** ו"התת-מודע מתוכנת עד גיל 7" (Bruce Lipton): אין לזה בסיס מחקרי.
 - **Joe Dispenza**, *Breaking the Habit of Being Yourself*: שפה מדעית וטענות שלא נבדקו.
