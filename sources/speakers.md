@@ -42,7 +42,7 @@
 | **Jim Kwik** | "המוח שלך הוא מחשב-על, והדיבור הפנימי שלך הוא התוכנה שהוא מריץ" ([מקור](https://ee.linkedin.com/posts/jimkwik_who-else-thinks-our-words-matter-your-activity-7042117641007726592-dEwN)). מאמן מוח, מאמן של ידוענים | הספר *Limitless*; הפודקאסט *Kwik Brain* | ⚠️ |
 | **Shad Helmstetter** | "אבי הדיבור הפנימי". כל אחד מתוכנת מלידה, והמוח מאמין למה שאומרים לו הכי הרבה | הספר [*What to Say When You Talk to Your Self*](https://www.goodreads.com/book/show/321982.What_to_Say_When_You_Talk_to_Yourself) (1986) | ⚠️ ה"75% תכנות שלילי" שלו הוא לא נתון מחקרי |
 | **Marisa Peer** | מטפלת בהיפנוזה, "Rapid Transformational Therapy". המסר: "I am enough", לתכנת מחדש את האמונה הבסיסית | TEDx: *I Am Enough* | ⚠️ |
-| **Richard Bandler** | ממייסדי NLP, "תכנות נוירו-לשוני". השם הכי קרוב לשלך. טוני רובינס למד אצלו | הספרים *Frogs into Princes*, *Using Your Brain for a Change* | ❌ אין תמיכה מחקרית. כדאי להכיר כי הקהל יחשוב עליו |
+| **Richard Bandler** ו-**John Grinder** | מייסדי NLP, "תכנות נוירו-לשוני" (שנות ה-70). השם הכי קרוב לשלך. טוני רובינס למד אצל שניהם, בעיקר אצל גרינדר; Paul McKenna הבריטי הוא תלמיד של בנדלר. ל-Society of NLP של בנדלר יש מאות מכונים בעולם | הספרים *Frogs into Princes*, *Using Your Brain for a Change* | ❌ אין תמיכה מחקרית. כדאי להכיר כי הקהל יחשוב עליו |
 | **Bruce Lipton** | "התת-מודע מתוכנת עד גיל 7", "95% מההתנהגות מהתת-מודע" | הספר *The Biology of Belief* | ❌ |
 | **Bob Proctor** | "פרדיגמות": תכנות תת-מודע שקובע תוצאות | הסרט *The Secret* | ❌ |
 
