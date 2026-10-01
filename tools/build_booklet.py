@@ -5,7 +5,8 @@ Usage:
   build_booklet.py <sections_dir> <fonts_dir> <out.html> [--clean]
 
 --clean prints only the spoken words, as flowing prose: no stage directions, screen cues,
-pause marks, placeholders or tables.
+pause marks, placeholders or tables. With --clean, <sections_dir> may instead be a proofread
+text file (talk/reading-version.md: paragraphs separated by blank lines, parts by ---).
 
 <sections_dir> holds the editor's section documents as JSON (ArtifactData --out_dir output);
 each section's current `body` is the text that gets printed.
@@ -91,7 +92,8 @@ def clean_text(body: str) -> list[str]:
             line = re.sub(r"\[[^\]]*\]|‹[^›]*›", " ", line)   # stage directions, cues, placeholders
             line = re.sub(r"\s*/+\s*", " ", line)               # pause marks
             line = re.sub(r"\s+", " ", line).strip()
-            if line:
+            line = re.sub(r"([.?!,])(\s*\.)+", r"\1", line)        # punctuation left behind a removed note
+            if line and not re.fullmatch(r"[.?!,\s]*", line):
                 words.append(line)
         if words:
             paras.append(" ".join(words))
@@ -130,9 +132,17 @@ def load_docs(sections_dir: Path) -> list[dict]:
     return sorted(docs, key=lambda d: d.get("order", 0))
 
 
-def build_clean(sections_dir: Path, fonts: Path, out: Path):
-    docs = load_docs(sections_dir)
-    parts = [clean_text(d.get("body", "")) for d in docs]
+def load_clean_parts(source: Path) -> list[list[str]]:
+    """Paragraphs per part, from the editor's sections or from a proofread text file (parts split by ---)."""
+    if source.is_file():
+        text = source.read_text(encoding="utf-8")
+        return [[p.strip() for p in re.split(r"\n\s*\n", part) if p.strip()]
+                for part in re.split(r"\n-{3,}\n", text)]
+    return [clean_text(d.get("body", "")) for d in load_docs(source)]
+
+
+def build_clean(source: Path, fonts: Path, out: Path):
+    parts = load_clean_parts(source)
     body = '\n<div class="sep">✦</div>\n'.join(
         "".join(f"<p>{html.escape(t, quote=False)}</p>" for t in paras) for paras in parts if paras
     )

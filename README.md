@@ -12,6 +12,8 @@
 | `talk/opening.md` | עבודה מפורטת על הפתיח: ביטים, טיוטה, הנפשת התמונה. |
 | `visuals/` | הדמיות חיות (HTML): `intro-options.html` (אפשרויות הפתיח), `prompter.html` (טלפרומפטר: פתיח ואז התסריט נגלל). המנוע המשותף ב-`intro-engine.js`. |
 | `visuals/editor.html` | עורך התסריט: עריכה לפי חלקים ואישור. אישור מעיר את Claude, שמכניס את הטקסט המאושר ל-`talk/script.md` (דרך `tools/script_sync.py`). |
+| `talk/reading-version.md` | גרסת קריאה מוגהת של כל הטקסט, בלי סימני במה. נגזרת מהתסריט, ומתעדכנת ידנית. |
+| `exports/` | קובצי PDF להדפסה ולקריאה (נוצרים עם `tools/build_booklet.py`). |
 | `talk/script.md` | טקסט ההרצאה המלא (נכתב אחרי שהמבנה מתייצב). |
 | `videos/backlog.md` | רעיונות לסרטונים קצרים שנגזרים מהתוכן, עם סטטוס. |
 | `sources/references.md` | מקורות, נתונים, ציטוטים ומחקרים לגיבוי טענות. |
