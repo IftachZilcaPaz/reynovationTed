@@ -2,7 +2,10 @@
 """Build a clean, printable HTML booklet of the talk (render it to PDF with tools/booklet_pdf.cjs).
 
 Usage:
-  build_booklet.py <sections_dir> <fonts_dir> <out.html>
+  build_booklet.py <sections_dir> <fonts_dir> <out.html> [--clean]
+
+--clean prints only the spoken words, as flowing prose: no stage directions, screen cues,
+pause marks, placeholders or tables.
 
 <sections_dir> holds the editor's section documents as JSON (ArtifactData --out_dir output);
 each section's current `body` is the text that gets printed.
@@ -79,6 +82,22 @@ def render_body(body: str) -> str:
     return "\n".join(out)
 
 
+def clean_text(body: str) -> list[str]:
+    """Spoken words only, one string per paragraph."""
+    paras = []
+    for para in re.split(r"\n\s*\n", body.strip()):
+        words = []
+        for line in para.splitlines():
+            line = re.sub(r"\[[^\]]*\]|‹[^›]*›", " ", line)   # stage directions, cues, placeholders
+            line = re.sub(r"\s*/+\s*", " ", line)               # pause marks
+            line = re.sub(r"\s+", " ", line).strip()
+            if line:
+                words.append(line)
+        if words:
+            paras.append(" ".join(words))
+    return paras
+
+
 def status(d: dict) -> str:
     body, approved = d.get("body", ""), d.get("approvedBody")
     if not body.strip():
@@ -88,12 +107,53 @@ def status(d: dict) -> str:
     return "טיוטה, ממתין לאישור"
 
 
-def build(sections_dir: Path, fonts: Path, out: Path):
+def faces_css(fonts: Path) -> str:
+    def face(family, file, weight):
+        return (f"@font-face{{font-family:'{family}';src:url('{(fonts / file).as_uri()}') format('woff2');"
+                f"font-weight:{weight};font-display:block}}")
+    return "\n".join([
+        face("Heebo", "heebo-hebrew-400-normal.woff2", 400), face("Heebo", "heebo-latin-400-normal.woff2", 400),
+        face("Heebo", "heebo-hebrew-500-normal.woff2", 500), face("Heebo", "heebo-hebrew-700-normal.woff2", 700),
+        face("Heebo", "heebo-latin-700-normal.woff2", 700),
+        face("Frank", "frank-ruhl-libre-hebrew-700-normal.woff2", 700),
+        face("Frank", "frank-ruhl-libre-latin-700-normal.woff2", 700),
+        face("Frank", "frank-ruhl-libre-hebrew-400-normal.woff2", 400),
+        face("Frank", "frank-ruhl-libre-latin-400-normal.woff2", 400),
+    ])
+
+
+def load_docs(sections_dir: Path) -> list[dict]:
     docs = []
     for p in sorted(sections_dir.rglob("*.json")):
         d = json.loads(p.read_text(encoding="utf-8"))
         docs.append(d.get("data", d))
-    docs.sort(key=lambda d: d.get("order", 0))
+    return sorted(docs, key=lambda d: d.get("order", 0))
+
+
+def build_clean(sections_dir: Path, fonts: Path, out: Path):
+    docs = load_docs(sections_dir)
+    parts = [clean_text(d.get("body", "")) for d in docs]
+    body = '\n<div class="sep">✦</div>\n'.join(
+        "".join(f"<p>{html.escape(t, quote=False)}</p>" for t in paras) for paras in parts if paras
+    )
+    doc = f"""<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לתכנת את המוח</title>
+<style>
+{faces_css(fonts)}
+@page {{ size: A4; margin: 25mm 24mm 24mm; }}
+body {{ margin: 0; font-family: Frank, 'FreeSerif', serif; font-size: 13pt; line-height: 1.75; color: #1d1f22; }}
+h1 {{ font-size: 26pt; font-weight: 700; margin: 0 0 12mm; }}
+p {{ margin: 0 0 4.5mm; text-align: justify; }}
+.sep {{ text-align: center; color: #b7bbc0; margin: 6mm 0 7mm; font-size: 11pt; }}
+</style></head><body>
+<h1>לתכנת את המוח</h1>
+{body}
+</body></html>"""
+    out.write_text(doc, encoding="utf-8")
+    print(f"wrote {out}: clean text, {sum(len(p) for p in parts)} paragraphs")
+
+
+def build(sections_dir: Path, fonts: Path, out: Path):
+    docs = load_docs(sections_dir)
 
     counts = [word_count(d.get("body", "")) for d in docs]
     total = sum(counts)
@@ -119,18 +179,7 @@ def build(sections_dir: Path, fonts: Path, out: Path):
         f"<tr><td>{html.escape(a)}</td><td>{html.escape(b)}</td><td>{c}</td></tr>" for a, b, c in SOURCES
     )
 
-    def face(family, file, weight):
-        return (f"@font-face{{font-family:'{family}';src:url('{(fonts / file).as_uri()}') format('woff2');"
-                f"font-weight:{weight};font-display:block}}")
-
-    faces = "\n".join([
-        face("Heebo", "heebo-hebrew-400-normal.woff2", 400), face("Heebo", "heebo-latin-400-normal.woff2", 400),
-        face("Heebo", "heebo-hebrew-500-normal.woff2", 500), face("Heebo", "heebo-hebrew-700-normal.woff2", 700),
-        face("Heebo", "heebo-latin-700-normal.woff2", 700),
-        face("Frank", "frank-ruhl-libre-hebrew-700-normal.woff2", 700),
-        face("Frank", "frank-ruhl-libre-latin-700-normal.woff2", 700),
-        face("Frank", "frank-ruhl-libre-hebrew-400-normal.woff2", 400),
-    ])
+    faces = faces_css(fonts)
 
     doc = f"""<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לתכנת את המוח</title>
 <style>
@@ -231,6 +280,7 @@ mark {{ background: var(--mark); padding: 0 1mm; border-radius: 1mm; }}
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
+    args = [a for a in sys.argv[1:] if a != "--clean"]
+    if len(args) != 3:
         sys.exit(__doc__)
-    build(Path(sys.argv[1]), Path(sys.argv[2]).resolve(), Path(sys.argv[3]))
+    (build_clean if "--clean" in sys.argv else build)(Path(args[0]), Path(args[1]).resolve(), Path(args[2]))
