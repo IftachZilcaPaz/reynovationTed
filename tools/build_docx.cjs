@@ -1,13 +1,14 @@
 // Build an editable, right-to-left Word file from the proofread reading version.
-// usage: NODE_PATH=<dir with docx> node tools/build_docx.cjs talk/reading-version.md <out.docx>
+// usage: NODE_PATH=<dir with docx> node tools/build_docx.cjs talk/reading-version.md <out.docx> ["title 1|title 2|..."]
 const fs = require('fs');
 const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = require('docx');
 
-const PART_TITLES = ['לפני', 'נקודת המפנה', 'הקוד שירשנו', 'לתכנת את המוח', 'הקפיצה / ההחלטה', 'אליכם'];
+const DEFAULT_TITLES = ['לפני', 'נקודת המפנה', 'הקוד שירשנו', 'לתכנת את המוח', 'הקפיצה / ההחלטה', 'אליכם'];
 const FONT = { ascii: 'Arial', hAnsi: 'Arial', cs: 'Arial' };
 
-const [src, out] = process.argv.slice(2);
-if (!src || !out) { console.error('usage: build_docx.cjs <reading-version.md> <out.docx>'); process.exit(2); }
+const [src, out, titles] = process.argv.slice(2);
+if (!src || !out) { console.error('usage: build_docx.cjs <reading-version.md> <out.docx> ["title 1|title 2|..."]'); process.exit(2); }
+const PART_TITLES = titles ? titles.split('|').map((t) => t.trim()) : DEFAULT_TITLES;
 
 const parts = fs.readFileSync(src, 'utf8').split(/\n-{3,}\n/).map((part) =>
   part.split(/\n\s*\n/).map((p) => p.replace(/\s+/g, ' ').trim()).filter(Boolean));
