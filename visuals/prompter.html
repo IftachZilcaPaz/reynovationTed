@@ -90,6 +90,9 @@ input[type=checkbox] { width: 16px; height: 16px; }
 .dir { font-family: var(--mono); font-size: .5em; color: var(--accent); letter-spacing: .04em; }
 .cue { font-family: var(--mono); font-size: .5em; color: var(--cue); letter-spacing: .04em; }
 .gap { color: #9aa0a6; border-bottom: 2px dashed #5b6168; }
+.opt { color: #8e939a; font-style: italic; }
+.opt::before, .opt::after { color: #5b6168; font-style: normal; }
+.opt::before { content: '{'; } .opt::after { content: '}'; }
 .p1, .p2 { font-style: normal; color: var(--accent); font-weight: 400; }
 .p1 { opacity: .75; margin-inline: .1em; }
 .p2 { margin-inline: .2em; }
@@ -169,6 +172,7 @@ input[type=checkbox] { width: 16px; height: 16px; }
     <span><b>[ ]</b>הוראת במה</span>
     <span><b style="color: var(--cue)">▣</b>מה מוצג על המסך</span>
     <span><b>‹ ›</b>פרט שעוד חסר</span>
+    <span><b>{ }</b>מחשבה: אולי לומר, אולי לא</span>
   </div>
 </div>
 
@@ -223,6 +227,7 @@ input[type=checkbox] { width: 16px; height: 16px; }
       .replace(/`?\[מסך:\s*([^\]]*)\]`?/g, '<span class="cue">▣ $1</span>')
       .replace(/`?\[([^\]]+)\]`?/g, '<span class="dir">[$1]</span>')
       .replace(/‹([^›]*)›/g, '<span class="gap">$1</span>')
+      .replace(/\{([^}]*)\}/g, '<span class="opt">$1</span>')
       .replace(/\s*\/\/\s*/g, ' <i class="p2" aria-hidden="true">//</i> ')
       .replace(/\s\/\s/g, ' <i class="p1" aria-hidden="true">/</i> ')
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');

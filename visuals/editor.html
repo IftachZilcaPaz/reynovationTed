@@ -130,6 +130,7 @@ textarea:read-only { opacity: .8; }
     { ins: ' // ', label: '//', hint: 'עצירה' },
     { ins: '[]', label: '[ ]', hint: 'הוראת במה', caret: 1 },
     { ins: '‹›', label: '‹ ›', hint: 'פרט חסר', caret: 1 },
+    { ins: '{}', label: '{ }', hint: 'מחשבה: אולי לומר, אולי לא', caret: 1 },
     { ins: '[מסך: ]', label: '▣', hint: 'מסך: תמונה או סרטון', caret: 6 },
   ];
   const STATE_LABEL = {
@@ -147,6 +148,7 @@ textarea:read-only { opacity: .8; }
   const words = (text) => text.replace(/\[[^\]]*\]/g, ' ').replace(/\/+/g, ' ')
     .split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
   const minutes = (n) => (n ? `~${(n / WPM).toFixed(1)} דק׳` : '');
+  const optionalWords = (text) => [...text.matchAll(/\{([^}]*)\}/g)].reduce((n, m) => n + words(m[1]), 0);
   const clock = (ms) => new Date(ms).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
 
   function stateOf(u) {
@@ -217,7 +219,8 @@ textarea:read-only { opacity: .8; }
     els.title.textContent = doc.title;
     els.pill.dataset.state = st;
     els.pill.textContent = STATE_LABEL[st];
-    els.meta.textContent = n ? `${n} מילים · ${minutes(n)}` : '';
+    const opt = optionalWords(els.ta.value);
+    els.meta.textContent = n ? `${n} מילים · ${minutes(n)}${opt ? ` · בלי { }: ${minutes(n - opt)}` : ''}` : '';
     els.saved.textContent = u.dirty ? 'שומר…'
       : doc.syncedAt && st === 'synced' ? `נכנס לרפו ב-${clock(doc.syncedAt)}`
       : doc.approvedAt && st === 'pending' ? `אושר ב-${clock(doc.approvedAt)}`

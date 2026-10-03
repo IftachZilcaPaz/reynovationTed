@@ -16,11 +16,19 @@ const run = (text, extra = {}) => new TextRun({ text, rightToLeft: true, font: F
 const heading = (text, level) => new Paragraph({
   heading: level, bidirectional: true, alignment: AlignmentType.START, children: [run(text)],
 });
+// {...} marks a thought that may or may not be said on stage: kept, set in grey italics.
+const OPTIONAL = { color: '8A8F96', italics: true, italicsComplexScript: true };
+const runs = (text) => text.split(/(\{[^}]*\})/).filter(Boolean).map((chunk) =>
+  chunk.startsWith('{') && chunk.endsWith('}') ? run(chunk.slice(1, -1), OPTIONAL) : run(chunk));
 const body = (text) => new Paragraph({
-  bidirectional: true, alignment: AlignmentType.BOTH, spacing: { after: 160, line: 360 }, children: [run(text)],
+  bidirectional: true, alignment: AlignmentType.BOTH, spacing: { after: 160, line: 360 }, children: runs(text),
 });
 
 const children = [heading('לתכנת את המוח', HeadingLevel.TITLE)];
+if (parts.flat().some((p) => /\{[^}]*\}/.test(p))) {
+  children.push(new Paragraph({ bidirectional: true, alignment: AlignmentType.START, spacing: { after: 240 },
+    children: [run('טקסט באפור נטוי: מחשבות שאולי ייאמרו ואולי לא.', { ...OPTIONAL, size: 20, sizeComplexScript: 20 })] }));
+}
 parts.forEach((paras, i) => {
   children.push(heading(`חלק ${i + 1} · ${PART_TITLES[i] || ''}`.trim(), HeadingLevel.HEADING_1));
   paras.forEach((p) => children.push(body(p)));

@@ -19,7 +19,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from script_sync import WPM, word_count  # noqa: E402
+from script_sync import WPM, optional_count, word_count  # noqa: E402
 
 SUMMARY = {
     "לפני": "נעים מאוד, אני יפתח: אמא, אבא, העוף המוזר והדקל. הרצון לעשות אחרת, \"אי אפשר\", והרכבת.",
@@ -58,12 +58,18 @@ def minutes(n: int) -> str:
     return f"{n / WPM:.1f}"
 
 
+def optional(escaped: str) -> str:
+    """{...} marks a thought that may or may not be said: shown, but set apart."""
+    return re.sub(r"\{([^}]*)\}", r'<span class="opt">\1</span>', escaped)
+
+
 def inline(text: str) -> str:
     """Escape, then style screen cues, stage directions, gaps and pause marks."""
     t = html.escape(text, quote=False)
     t = re.sub(r"\[מסך:\s*([^\]]*)\]", r'<span class="cue">▣ \1</span>', t)
     t = re.sub(r"\[([^\]]+)\]", r'<span class="dir">\1</span>', t)
     t = re.sub(r"‹([^›]*)›", r'<mark>\1</mark>', t)
+    t = optional(t)
     t = re.sub(r"\s*//\s*", ' <span class="p2">//</span> ', t)
     t = re.sub(r"\s/\s", ' <span class="p1">/</span> ', t)
     return t.strip()
@@ -144,7 +150,7 @@ def load_clean_parts(source: Path) -> list[list[str]]:
 def build_clean(source: Path, fonts: Path, out: Path):
     parts = load_clean_parts(source)
     body = '\n<div class="sep">✦</div>\n'.join(
-        "".join(f"<p>{html.escape(t, quote=False)}</p>" for t in paras) for paras in parts if paras
+        "".join(f"<p>{optional(html.escape(t, quote=False))}</p>" for t in paras) for paras in parts if paras
     )
     doc = f"""<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>לתכנת את המוח</title>
 <style>
@@ -154,8 +160,11 @@ body {{ margin: 0; font-family: Frank, 'FreeSerif', serif; font-size: 13pt; line
 h1 {{ font-size: 26pt; font-weight: 700; margin: 0 0 12mm; }}
 p {{ margin: 0 0 4.5mm; text-align: justify; }}
 .sep {{ text-align: center; color: #b7bbc0; margin: 6mm 0 7mm; font-size: 11pt; }}
+.opt {{ color: #8a8f96; font-style: italic; }}
+.note {{ color: #8a8f96; font-size: 10pt; margin: -6mm 0 10mm; }}
 </style></head><body>
 <h1>לתכנת את המוח</h1>
+{'<p class="note">טקסט באפור: מחשבות שאולי ייאמרו ואולי לא.</p>' if 'class="opt"' in body else ''}
 {body}
 </body></html>"""
     out.write_text(doc, encoding="utf-8")
@@ -167,6 +176,7 @@ def build(sections_dir: Path, fonts: Path, out: Path):
 
     counts = [word_count(d.get("body", "")) for d in docs]
     total = sum(counts)
+    opt_total = sum(optional_count(d.get("body", "")) for d in docs)
     gaps = [(d["label"], g) for d in docs for g in re.findall(r"‹([^›]*)›", d.get("body", ""))]
 
     rows = "".join(
@@ -227,6 +237,8 @@ tfoot td {{ font-weight: 700; border-bottom: 0; }}
 .dir::before {{ content: '['; }} .dir::after {{ content: ']'; }}
 .cue {{ color: var(--cue); font-size: 9.5pt; font-weight: 500; }}
 mark {{ background: var(--mark); padding: 0 1mm; border-radius: 1mm; }}
+.opt {{ color: var(--muted); font-style: italic; }}
+.opt::before {{ content: '{{'; }} .opt::after {{ content: '}}'; }}
 .p1 {{ color: #b9bdc2; }}
 .p2 {{ color: var(--accent); font-weight: 700; }}
 .empty {{ color: var(--muted); }}
@@ -260,7 +272,7 @@ mark {{ background: var(--mark); padding: 0 1mm; border-radius: 1mm; }}
   <table>
     <thead><tr><th>#</th><th>חלק</th><th>מילים</th><th>דק'</th><th>סטטוס</th></tr></thead>
     <tbody>{rows}</tbody>
-    <tfoot><tr><td></td><td>סה"כ</td><td class="num">{total:,}</td><td class="num">{minutes(total)}</td><td></td></tr></tfoot>
+    <tfoot><tr><td></td><td>סה"כ</td><td class="num">{total:,}</td><td class="num">{minutes(total)}</td><td>{f"בלי המחשבות האופציונליות: כ-{minutes(total - opt_total)} דק'" if opt_total else ""}</td></tr></tfoot>
   </table>
 
   <h3>איך לקרוא את הטקסט</h3>
@@ -270,6 +282,7 @@ mark {{ background: var(--mark); padding: 0 1mm; border-radius: 1mm; }}
     <span><span class="dir">הוראת במה</span></span>
     <span><span class="cue">▣ מה מוצג על המסך</span></span>
     <span><mark>פרט שעוד חסר</mark></span>
+    <span><span class="opt">מחשבה אופציונלית</span></span>
   </div>
 </section>
 

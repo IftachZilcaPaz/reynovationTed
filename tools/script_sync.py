@@ -17,12 +17,18 @@ from pathlib import Path
 WPM = 130
 HEADING = re.compile(r"^##\s+(?P<label>[^:]+?)\s*:\s*(?P<title>.*)$")
 DURATION = re.compile(r"^\*\*משך משוער:\*\*")
+OPTIONAL = re.compile(r"\{([^}]*)\}")
 PENDING = "_ממתין לתוכן_"
 
 
 def word_count(text: str) -> int:
     text = re.sub(r"\[[^\]]*\]", " ", text).replace("/", " ")
     return sum(1 for w in text.split() if re.search(r"\w", w))
+
+
+def optional_count(text: str) -> int:
+    """Words inside {...}: thoughts that may or may not be said on stage."""
+    return sum(word_count(m) for m in OPTIONAL.findall(text))
 
 
 def split_script(md: str):
@@ -51,6 +57,8 @@ def render_script(header: str, sections) -> str:
         if body:
             n = word_count(body)
             meta = f"**משך משוער:** כ-{n / WPM:.1f} דק' (כ-{n} מילים)"
+            if opt := optional_count(body):
+                meta += f" · בלי המחשבות האופציונליות: כ-{(n - opt) / WPM:.1f} דק'"
             parts.append(f"## {s['label']}: {s['title']}\n{meta}\n\n{body}")
         else:
             parts.append(f"## {s['label']}: {s['title']}\n{PENDING}")
