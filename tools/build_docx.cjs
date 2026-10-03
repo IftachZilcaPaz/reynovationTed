@@ -3,7 +3,7 @@
 const fs = require('fs');
 const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = require('docx');
 
-const PART_TITLES = ['לפני', 'נקודת המפנה', 'הקוד שירשנו', 'לתכנת את המוח', 'הקפיצה', 'אליכם'];
+const PART_TITLES = ['לפני', 'נקודת המפנה', 'הקוד שירשנו', 'לתכנת את המוח', 'הקפיצה / ההחלטה', 'אליכם'];
 const FONT = { ascii: 'Arial', hAnsi: 'Arial', cs: 'Arial' };
 
 const [src, out] = process.argv.slice(2);
